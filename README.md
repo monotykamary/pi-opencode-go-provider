@@ -1,0 +1,87 @@
+# pi-opencode-go-provider
+
+A [pi](https://github.com/marioechr/pi) extension that registers [opencode-go](https://opencode.ai/) as a custom provider. Access fast, efficient GLM, Kimi, and MiniMax models optimized for speed through a unified API.
+
+## Features
+
+- **3 Optimized AI Models** - GLM-5, Kimi K2.5, and MiniMax M2.5
+- **Fast & Efficient** - Go-optimized endpoints for lower latency
+- **Unified API** via opencode.ai's OpenAI-compatible completions endpoint
+- **Cost Tracking** with per-model pricing for budget management
+- **Reasoning Models** support for advanced reasoning capabilities
+- **Vision Support** for image-capable models
+
+## Installation
+
+### Option 1: Using `pi install` (Recommended)
+
+Install directly from GitHub:
+
+```bash
+pi install git:github.com/monotykamary/pi-opencode-go-provider
+```
+
+Then set your API key and run pi:
+```bash
+export OPENCODE_API_KEY=your-api-key-here
+pi
+```
+
+### Option 2: Manual Clone
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/monotykamary/pi-opencode-go-provider.git
+   cd pi-opencode-go-provider
+   ```
+
+2. Set your opencode API key:
+   ```bash
+   export OPENCODE_API_KEY=your-api-key-here
+   ```
+
+3. Run pi with the extension:
+   ```bash
+   pi -e /path/to/pi-opencode-go-provider
+   ```
+
+## Available Models
+
+| Model | Type | Context | Max Tokens | Input Cost | Output Cost |
+|-------|------|---------|------------|------------|-------------|
+| GLM-5 | Text | 205K | 131K | $1.00 | $3.20 |
+| Kimi K2.5 | Text + Image | 262K | 66K | $0.60 | $3.00 |
+| MiniMax M2.5 | Text | 205K | 131K | $0.30 | $1.20 |
+*Costs are per million tokens. Prices subject to change - check [opencode.ai](https://opencode.ai) for current pricing.*
+
+## Usage
+
+After loading the extension, use the `/model` command in pi to select your preferred model:
+
+```
+/model
+```
+
+Then select "opencode-go" as the provider and choose from the available models.
+
+## Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `OPENCODE_API_KEY` | Yes | Your opencode.ai API key |
+
+## Configuration
+
+Add to your pi configuration for automatic loading:
+
+```json
+{
+  "extensions": [
+    "/path/to/pi-opencode-go-provider"
+  ]
+}
+```
+
+## License
+
+MIT
