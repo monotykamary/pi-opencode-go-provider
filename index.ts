@@ -38,6 +38,20 @@ export default function (pi: ExtensionAPI) {
 			maxTokens: 131072,
 		},
 		{
+			id: "minimax-m2.7",
+			name: "MiniMax M2.7",
+			reasoning: true,
+			input: ["text"],
+			cost: {
+				input: 0.3,
+				output: 1.2,
+				cacheRead: 0.06,
+				cacheWrite: 0,
+			},
+			contextWindow: 204800,
+			maxTokens: 131072,
+		},
+		{
 			id: "kimi-k2.5",
 			name: "Kimi K2.5",
 			reasoning: true,
