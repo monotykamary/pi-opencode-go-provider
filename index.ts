@@ -24,20 +24,6 @@ export default function (pi: ExtensionAPI) {
 
 		models: [
 		{
-			id: "glm-5",
-			name: "GLM-5",
-			reasoning: true,
-			input: ["text"],
-			cost: {
-				input: 1,
-				output: 3.2,
-				cacheRead: 0.2,
-				cacheWrite: 0,
-			},
-			contextWindow: 204800,
-			maxTokens: 131072,
-		},
-		{
 			id: "kimi-k2.5",
 			name: "Kimi K2.5",
 			reasoning: true,
@@ -50,6 +36,34 @@ export default function (pi: ExtensionAPI) {
 			},
 			contextWindow: 262144,
 			maxTokens: 65536,
+		},
+		{
+			id: "minimax-m2.7",
+			name: "MiniMax M2.7",
+			reasoning: true,
+			input: ["text"],
+			cost: {
+				input: 0.3,
+				output: 1.2,
+				cacheRead: 0.06,
+				cacheWrite: 0,
+			},
+			contextWindow: 204800,
+			maxTokens: 131072,
+		},
+		{
+			id: "glm-5",
+			name: "GLM-5",
+			reasoning: true,
+			input: ["text"],
+			cost: {
+				input: 1,
+				output: 3.2,
+				cacheRead: 0.2,
+				cacheWrite: 0,
+			},
+			contextWindow: 204800,
+			maxTokens: 131072,
 		},
 		{
 			id: "minimax-m2.5",
