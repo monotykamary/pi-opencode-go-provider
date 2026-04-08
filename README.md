@@ -4,7 +4,7 @@ A [pi](https://github.com/marioechr/pi) extension that registers [opencode-go](h
 
 ## Features
 
-- **3 Optimized AI Models** - GLM-5, Kimi K2.5, and MiniMax M2.5
+- **7 Optimized AI Models** - GLM-5, Kimi K2.5, and MiniMax M2.5
 - **Fast & Efficient** - Go-optimized endpoints for lower latency
 - **Unified API** via opencode.ai's OpenAI-compatible completions endpoint
 - **Cost Tracking** with per-model pricing for budget management
@@ -50,8 +50,12 @@ pi
 | Model | Type | Context | Max Tokens | Input Cost | Output Cost |
 |-------|------|---------|------------|------------|-------------|
 | GLM-5 | Text | 205K | 131K | $1.00 | $3.20 |
+| GLM-5.1 | Text | 205K | 131K | $1.40 | $4.40 |
 | Kimi K2.5 | Text + Image | 262K | 66K | $0.60 | $3.00 |
+| MiMo V2 Omni | Text + Image | 262K | 64K | $0.40 | $2.00 |
+| MiMo V2 Pro | Text | 1.0M | 64K | $1.00 | $3.00 |
 | MiniMax M2.5 | Text | 205K | 131K | $0.30 | $1.20 |
+| MiniMax M2.7 | Text | 205K | 131K | $0.30 | $1.20 |
 *Costs are per million tokens. Prices subject to change - check [opencode.ai](https://opencode.ai) for current pricing.*
 
 ## Usage
