@@ -34,7 +34,7 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Create Pull Request
+      - name: Create or Update Pull Request
         if: steps.check-changes.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
@@ -47,5 +47,7 @@ jobs:
             Changes include:
             - Updated model list in `index.ts`
             - Updated model table in `README.md`
-          branch: update-models-${{ github.run_id }}
+          branch: update-models
           delete-branch: true
+          # Limit to 1 open PR - will update existing PR if one exists
+          group: ${{ github.workflow }}
