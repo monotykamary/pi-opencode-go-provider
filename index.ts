@@ -52,6 +52,20 @@ export default function (pi: ExtensionAPI) {
 			maxTokens: 65536,
 		},
 		{
+			id: "mimo-v2.5-pro",
+			name: "MiMo V2.5 Pro",
+			reasoning: true,
+			input: ["text"],
+			cost: {
+				input: 1,
+				output: 3,
+				cacheRead: 0.2,
+				cacheWrite: 0,
+			},
+			contextWindow: 1048576,
+			maxTokens: 128000,
+		},
+		{
 			id: "glm-5",
 			name: "GLM-5",
 			reasoning: true,
@@ -77,7 +91,21 @@ export default function (pi: ExtensionAPI) {
 				cacheWrite: 0,
 			},
 			contextWindow: 262144,
-			maxTokens: 64000,
+			maxTokens: 128000,
+		},
+		{
+			id: "mimo-v2.5",
+			name: "MiMo V2.5",
+			reasoning: true,
+			input: ["text","image","audio","pdf"],
+			cost: {
+				input: 0.4,
+				output: 2,
+				cacheRead: 0.08,
+				cacheWrite: 0,
+			},
+			contextWindow: 262144,
+			maxTokens: 128000,
 		},
 		{
 			id: "qwen3.6-plus",
@@ -108,6 +136,20 @@ export default function (pi: ExtensionAPI) {
 			maxTokens: 131072,
 		},
 		{
+			id: "kimi-k2.6",
+			name: "Kimi K2.6 (3x limits)",
+			reasoning: true,
+			input: ["text","image","video"],
+			cost: {
+				input: 0.32,
+				output: 1.34,
+				cacheRead: 0.054,
+				cacheWrite: 0,
+			},
+			contextWindow: 262144,
+			maxTokens: 65536,
+		},
+		{
 			id: "minimax-m2.5",
 			name: "MiniMax M2.5",
 			reasoning: true,
@@ -133,7 +175,7 @@ export default function (pi: ExtensionAPI) {
 				cacheWrite: 0,
 			},
 			contextWindow: 1048576,
-			maxTokens: 64000,
+			maxTokens: 128000,
 		},
 		{
 			id: "qwen3.5-plus",
