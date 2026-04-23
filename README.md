@@ -23,7 +23,12 @@ pi install git:github.com/monotykamary/pi-opencode-go-provider
 
 Then set your API key and run pi:
 ```bash
+# Recommended: add to auth.json
+# See Authentication section below
+
+# Or set as environment variable
 export OPENCODE_API_KEY=your-api-key-here
+
 pi
 ```
 
@@ -37,6 +42,10 @@ pi
 
 2. Set your opencode API key:
    ```bash
+   # Recommended: add to auth.json
+   # See Authentication section below
+
+   # Or set as environment variable
    export OPENCODE_API_KEY=your-api-key-here
    ```
 
@@ -70,11 +79,23 @@ After loading the extension, use the `/model` command in pi to select your prefe
 
 Then select "opencode-go" as the provider and choose from the available models.
 
+## Authentication
+
+The opencode-go API key can be configured in multiple ways (resolved in this order):
+
+1. **`auth.json`** (recommended) — Add to `~/.pi/agent/auth.json`:
+   ```json
+   { "opencode-go": { "type": "api_key", "key": "your-api-key" } }
+   ```
+   The `key` field supports literal values, env var names, and shell commands (prefix with `!`). See [pi's auth file docs](https://github.com/badlogic/pi-mono) for details.
+2. **Runtime override** — Use the `--api-key` CLI flag
+3. **Environment variable** — Set `OPENCODE_API_KEY`
+
 ## Environment Variables
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `OPENCODE_API_KEY` | Yes | Your opencode.ai API key |
+| `OPENCODE_API_KEY` | No | Your opencode.ai API key (fallback if not in auth.json) |
 
 ## Configuration
 
