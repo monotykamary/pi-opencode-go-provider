@@ -5,11 +5,7 @@
  * Base URL: https://opencode.ai/zen/go/v1
  *
  * Usage:
- *   # Option 1: Store in auth.json (recommended)
- *   # Add to ~/.pi/agent/auth.json:
- *   #   "opencode-go": { "type": "api_key", "key": "your-api-key" }
- *
- *   # Option 2: Set as environment variable
+ *   # Set your API key
  *   export OPENCODE_API_KEY=your-api-key
  *
  *   # Run pi with the extension
@@ -18,40 +14,9 @@
  * Then use /model to select from available models
  */
 
-import type { ExtensionAPI, ModelRegistry } from "@mariozechner/pi-coding-agent";
-
-// ─── API Key Resolution (via ModelRegistry) ────────────────────────────────────
-
-/**
- * Cached API key resolved from ModelRegistry.
- *
- * Pi's core resolves the key via ModelRegistry before making requests,
- * but we also cache it here so we can resolve it in contexts where the resolved
- * key isn't directly available (e.g. future features like quota fetching) and
- * to make the dependency explicit.
- *
- * Resolution order (via ModelRegistry.getApiKeyForProvider):
- *   1. Runtime override (CLI --api-key)
- *   2. auth.json stored credentials (manual entry in ~/.pi/agent/auth.json)
- *   3. OAuth tokens (auto-refreshed)
- *   4. Environment variable (from auth.json or provider config)
- */
-let cachedApiKey: string | undefined;
-
-/**
- * Resolve the opencode-go API key via ModelRegistry and cache the result.
- * Called on session_start and whenever ctx.modelRegistry is available.
- */
-async function resolveApiKey(modelRegistry: ModelRegistry): Promise<void> {
-  cachedApiKey = await modelRegistry.getApiKeyForProvider("opencode-go") ?? undefined;
-}
+import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 
 export default function (pi: ExtensionAPI) {
-  // Resolve API key via ModelRegistry on session start
-  pi.on("session_start", async (_event, ctx) => {
-    await resolveApiKey(ctx.modelRegistry);
-  });
-
 	pi.registerProvider("opencode-go", {
 		baseUrl: "https://opencode.ai/zen/go/v1",
 		apiKey: "OPENCODE_API_KEY",
@@ -171,6 +136,20 @@ export default function (pi: ExtensionAPI) {
 			maxTokens: 131072,
 		},
 		{
+			id: "deepseek-v4-flash",
+			name: "DeepSeek V4 Flash",
+			reasoning: true,
+			input: ["text"],
+			cost: {
+				input: 0.14,
+				output: 0.28,
+				cacheRead: 0.028,
+				cacheWrite: 0,
+			},
+			contextWindow: 1000000,
+			maxTokens: 384000,
+		},
+		{
 			id: "kimi-k2.6",
 			name: "Kimi K2.6 (3x limits)",
 			reasoning: true,
@@ -183,6 +162,20 @@ export default function (pi: ExtensionAPI) {
 			},
 			contextWindow: 262144,
 			maxTokens: 65536,
+		},
+		{
+			id: "deepseek-v4-pro",
+			name: "DeepSeek V4 Pro",
+			reasoning: true,
+			input: ["text"],
+			cost: {
+				input: 1.74,
+				output: 3.48,
+				cacheRead: 0.145,
+				cacheWrite: 0,
+			},
+			contextWindow: 1000000,
+			maxTokens: 384000,
 		},
 		{
 			id: "minimax-m2.5",
