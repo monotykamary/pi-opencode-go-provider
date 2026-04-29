@@ -155,6 +155,7 @@ export default function (pi: ExtensionAPI) {
         pi.registerProvider("opencode-go", {
           baseUrl: BASE_URL,
           apiKey: "OPENCODE_API_KEY",
+          api: "openai-completions",
           models: freshBase,
         });
       }
