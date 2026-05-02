@@ -4,16 +4,8 @@
  * Registers opencode-go as a custom provider using the openai-completions API.
  * Base URL: https://opencode.ai/zen/go/v1
  *
- * Model resolution strategy: Stale-While-Revalidate
- *   1. Serve stale immediately: disk cache → embedded models.json (zero-latency)
- *   2. Revalidate in background: live API /models → merge with embedded → cache → hot-swap
- *
  * Usage:
- *   # Option 1: Store in auth.json (recommended)
- *   # Add to ~/.pi/agent/auth.json:
- *   #   "opencode-go": { "type": "api_key", "key": "your-api-key" }
- *
- *   # Option 2: Set as environment variable
+ *   # Set your API key
  *   export OPENCODE_API_KEY=your-api-key
  *
  *   # Run pi with the extension
@@ -22,151 +14,211 @@
  * Then use /model to select from available models
  */
 
-import type { ExtensionAPI, ModelRegistry } from "@mariozechner/pi-coding-agent";
-import modelsData from "./models.json" with { type: "json" };
-import fs from "fs";
-import os from "os";
-import path from "path";
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-interface JsonModel {
-  id: string;
-  name: string;
-  reasoning: boolean;
-  input: string[];
-  cost: {
-    input: number;
-    output: number;
-    cacheRead: number;
-    cacheWrite: number;
-  };
-  contextWindow: number;
-  maxTokens: number;
-}
-
-// ─── Stale-While-Revalidate Model Sync ────────────────────────────────────────
-
-const PROVIDER_ID = "opencode-go";
-const BASE_URL = "https://opencode.ai/zen/go/v1";
-const MODELS_URL = `${BASE_URL}/models`;
-const CACHE_DIR = path.join(os.homedir(), ".pi", "agent", "cache");
-const CACHE_PATH = path.join(CACHE_DIR, `${PROVIDER_ID}-models.json`);
-const LIVE_FETCH_TIMEOUT_MS = 8000;
-
-/** Transform a model from the opencode-go /v1/models API. Returns bare IDs only. */
-function transformApiModel(apiModel: any): JsonModel {
-  return {
-    id: apiModel.id,
-    name: apiModel.id,
-    reasoning: false,
-    input: ["text"],
-    cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
-    contextWindow: 131072,
-    maxTokens: 131072,
-  };
-}
-
-async function fetchLiveModels(apiKey: string, signal?: AbortSignal): Promise<JsonModel[] | null> {
-  try {
-    const response = await fetch(MODELS_URL, {
-      headers: { Authorization: `Bearer ${apiKey}` },
-      signal: signal ? AbortSignal.any([AbortSignal.timeout(LIVE_FETCH_TIMEOUT_MS), signal]) : AbortSignal.timeout(LIVE_FETCH_TIMEOUT_MS),
-    });
-    if (!response.ok) return null;
-    const data = await response.json();
-    const apiModels = Array.isArray(data) ? data : (data.data || []);
-    if (!Array.isArray(apiModels) || apiModels.length === 0) return null;
-    return apiModels.map(transformApiModel);
-  } catch {
-    return null;
-  }
-}
-
-function loadCachedModels(): JsonModel[] | null {
-  try {
-    const data = JSON.parse(fs.readFileSync(CACHE_PATH, "utf8"));
-    return Array.isArray(data) ? data : null;
-  } catch {
-    return null;
-  }
-}
-
-function cacheModels(models: JsonModel[]): void {
-  try {
-    fs.mkdirSync(CACHE_DIR, { recursive: true });
-    fs.writeFileSync(CACHE_PATH, JSON.stringify(models, null, 2) + "\n");
-  } catch {
-    // Cache write failure is non-fatal
-  }
-}
-
-function mergeWithEmbedded(liveModels: JsonModel[], embeddedModels: JsonModel[]): JsonModel[] {
-  const embeddedIds = new Set(embeddedModels.map(m => m.id));
-  const result = [...embeddedModels];
-  for (const model of liveModels) {
-    if (!embeddedIds.has(model.id)) {
-      result.push(model);
-    }
-  }
-  return result;
-}
-
-function loadStaleModels(embeddedModels: JsonModel[]): JsonModel[] {
-  const cached = loadCachedModels();
-  if (cached && cached.length > 0) return cached;
-  return embeddedModels;
-}
-
-async function revalidateModels(apiKey: string | undefined, embeddedModels: JsonModel[], signal?: AbortSignal): Promise<JsonModel[] | null> {
-  if (!apiKey) return null;
-  const liveModels = await fetchLiveModels(apiKey, signal);
-  if (!liveModels || liveModels.length === 0) return null;
-  const merged = mergeWithEmbedded(liveModels, embeddedModels);
-  cacheModels(merged);
-  return merged;
-}
-
-// ─── API Key Resolution (via ModelRegistry) ────────────────────────────────────
-
-let cachedApiKey: string | undefined;
-let revalidateAbort: AbortController | null = null;
-
-async function resolveApiKey(modelRegistry: ModelRegistry): Promise<void> {
-  cachedApiKey = await modelRegistry.getApiKeyForProvider("opencode-go") ?? undefined;
-}
-
-// ─── Extension Entry Point ────────────────────────────────────────────────────
+import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 
 export default function (pi: ExtensionAPI) {
-  const embeddedModels = modelsData as JsonModel[];
-  const staleBase = loadStaleModels(embeddedModels);
+	pi.registerProvider("opencode-go", {
+		baseUrl: "https://opencode.ai/zen/go/v1",
+		apiKey: "OPENCODE_API_KEY",
+		api: "openai-completions",
 
-  pi.registerProvider("opencode-go", {
-    baseUrl: BASE_URL,
-    apiKey: "OPENCODE_API_KEY",
-    api: "openai-completions",
-    models: staleBase,
-  });
-
-  pi.on("session_start", async (_event, ctx) => {
-    revalidateAbort?.abort();
-    revalidateAbort = new AbortController();
-    const signal = revalidateAbort.signal;
-    await resolveApiKey(ctx.modelRegistry);
-    revalidateModels(cachedApiKey, embeddedModels, signal).then((freshBase) => {
-      if (freshBase && !signal.aborted) {
-        pi.registerProvider("opencode-go", {
-          baseUrl: BASE_URL,
-          apiKey: "OPENCODE_API_KEY",
-          api: "openai-completions",
-          models: freshBase,
-        });
-      }
-    });
-  });
-
-  pi.on("session_shutdown", () => {
-    revalidateAbort?.abort();
-  });
+		models: [
+		{
+			id: "minimax-m2.7",
+			name: "MiniMax M2.7",
+			reasoning: true,
+			input: ["text"],
+			cost: {
+				input: 0.3,
+				output: 1.2,
+				cacheRead: 0.06,
+				cacheWrite: 0,
+			},
+			contextWindow: 204800,
+			maxTokens: 131072,
+		},
+		{
+			id: "kimi-k2.5",
+			name: "Kimi K2.5",
+			reasoning: true,
+			input: ["text","image","video"],
+			cost: {
+				input: 0.6,
+				output: 3,
+				cacheRead: 0.1,
+				cacheWrite: 0,
+			},
+			contextWindow: 262144,
+			maxTokens: 65536,
+		},
+		{
+			id: "mimo-v2.5-pro",
+			name: "MiMo V2.5 Pro",
+			reasoning: true,
+			input: ["text"],
+			cost: {
+				input: 1,
+				output: 3,
+				cacheRead: 0.2,
+				cacheWrite: 0,
+			},
+			contextWindow: 1048576,
+			maxTokens: 128000,
+		},
+		{
+			id: "glm-5",
+			name: "GLM-5",
+			reasoning: true,
+			input: ["text"],
+			cost: {
+				input: 1,
+				output: 3.2,
+				cacheRead: 0.2,
+				cacheWrite: 0,
+			},
+			contextWindow: 202752,
+			maxTokens: 32768,
+		},
+		{
+			id: "mimo-v2-omni",
+			name: "MiMo V2 Omni",
+			reasoning: true,
+			input: ["text","image","audio","pdf"],
+			cost: {
+				input: 0.4,
+				output: 2,
+				cacheRead: 0.08,
+				cacheWrite: 0,
+			},
+			contextWindow: 262144,
+			maxTokens: 128000,
+		},
+		{
+			id: "mimo-v2.5",
+			name: "MiMo V2.5",
+			reasoning: true,
+			input: ["text","image","audio","pdf"],
+			cost: {
+				input: 0.4,
+				output: 2,
+				cacheRead: 0.08,
+				cacheWrite: 0,
+			},
+			contextWindow: 1000000,
+			maxTokens: 128000,
+		},
+		{
+			id: "qwen3.6-plus",
+			name: "Qwen3.6 Plus",
+			reasoning: true,
+			input: ["text","image","video"],
+			cost: {
+				input: 0.5,
+				output: 3,
+				cacheRead: 0.05,
+				cacheWrite: 0.625,
+			},
+			contextWindow: 262144,
+			maxTokens: 65536,
+		},
+		{
+			id: "glm-5.1",
+			name: "GLM-5.1",
+			reasoning: true,
+			input: ["text"],
+			cost: {
+				input: 1.4,
+				output: 4.4,
+				cacheRead: 0.26,
+				cacheWrite: 0,
+			},
+			contextWindow: 202752,
+			maxTokens: 32768,
+		},
+		{
+			id: "deepseek-v4-flash",
+			name: "DeepSeek V4 Flash",
+			reasoning: true,
+			input: ["text"],
+			cost: {
+				input: 0.14,
+				output: 0.28,
+				cacheRead: 0.0028,
+				cacheWrite: 0,
+			},
+			contextWindow: 1000000,
+			maxTokens: 384000,
+		},
+		{
+			id: "kimi-k2.6",
+			name: "Kimi K2.6 (3x limits)",
+			reasoning: true,
+			input: ["text","image","video"],
+			cost: {
+				input: 0.32,
+				output: 1.34,
+				cacheRead: 0.054,
+				cacheWrite: 0,
+			},
+			contextWindow: 262144,
+			maxTokens: 65536,
+		},
+		{
+			id: "deepseek-v4-pro",
+			name: "DeepSeek V4 Pro",
+			reasoning: true,
+			input: ["text"],
+			cost: {
+				input: 1.74,
+				output: 3.48,
+				cacheRead: 0.0145,
+				cacheWrite: 0,
+			},
+			contextWindow: 1000000,
+			maxTokens: 384000,
+		},
+		{
+			id: "minimax-m2.5",
+			name: "MiniMax M2.5",
+			reasoning: true,
+			input: ["text"],
+			cost: {
+				input: 0.3,
+				output: 1.2,
+				cacheRead: 0.03,
+				cacheWrite: 0,
+			},
+			contextWindow: 204800,
+			maxTokens: 65536,
+		},
+		{
+			id: "mimo-v2-pro",
+			name: "MiMo V2 Pro",
+			reasoning: true,
+			input: ["text"],
+			cost: {
+				input: 1,
+				output: 3,
+				cacheRead: 0.2,
+				cacheWrite: 0,
+			},
+			contextWindow: 1048576,
+			maxTokens: 128000,
+		},
+		{
+			id: "qwen3.5-plus",
+			name: "Qwen3.5 Plus",
+			reasoning: true,
+			input: ["text","image","video"],
+			cost: {
+				input: 0.2,
+				output: 1.2,
+				cacheRead: 0.02,
+				cacheWrite: 0.25,
+			},
+			contextWindow: 262144,
+			maxTokens: 65536,
+		}
+		],
+	});
 }
