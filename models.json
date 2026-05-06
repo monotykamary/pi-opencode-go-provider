@@ -92,7 +92,7 @@
       "text",
       "image",
       "audio",
-      "pdf"
+      "video"
     ],
     "cost": {
       "input": 0.4,
