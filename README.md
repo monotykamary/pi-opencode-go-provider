@@ -4,7 +4,7 @@ A [pi](https://github.com/badlogic/pi-mono) extension that registers [opencode-g
 
 ## Features
 
-- **14 Optimized AI Models** - GLM-5, Kimi K2.5, and MiniMax M2.5
+- **12 Optimized AI Models** - GLM-5, Kimi K2.5, and MiniMax M2.5
 - **Fast & Efficient** - Go-optimized endpoints for lower latency
 - **Unified API** via opencode.ai's OpenAI-compatible completions endpoint
 - **Cost Tracking** with per-model pricing for budget management
@@ -63,9 +63,7 @@ pi
 | GLM-5 | Text | 203K | 33K | $1.00 | $3.20 |
 | GLM-5.1 | Text | 203K | 33K | $1.40 | $4.40 |
 | Kimi K2.5 | Text + Image | 262K | 66K | $0.60 | $3.00 |
-| Kimi K2.6 (3x limits) | Text + Image | 262K | 66K | $0.32 | $1.34 |
-| MiMo V2 Omni | Text + Image | 262K | 128K | $0.40 | $2.00 |
-| MiMo V2 Pro | Text | 1.0M | 128K | $1.00 | $3.00 |
+| Kimi K2.6 | Text + Image | 262K | 66K | $0.95 | $4.00 |
 | MiMo V2.5 | Text + Image | 1.0M | 128K | $0.40 | $2.00 |
 | MiMo V2.5 Pro | Text | 1.0M | 128K | $1.00 | $3.00 |
 | MiniMax M2.5 | Text | 205K | 66K | $0.30 | $1.20 |
