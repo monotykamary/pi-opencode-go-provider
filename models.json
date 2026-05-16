@@ -1,21 +1,5 @@
 [
   {
-    "id": "minimax-m2.7",
-    "name": "MiniMax M2.7",
-    "reasoning": true,
-    "input": [
-      "text"
-    ],
-    "cost": {
-      "input": 0.3,
-      "output": 1.2,
-      "cacheRead": 0.06,
-      "cacheWrite": 0
-    },
-    "contextWindow": 204800,
-    "maxTokens": 131072
-  },
-  {
     "id": "kimi-k2.5",
     "name": "Kimi K2.5",
     "reasoning": true,
@@ -34,59 +18,8 @@
     "maxTokens": 65536
   },
   {
-    "id": "mimo-v2.5-pro",
-    "name": "MiMo V2.5 Pro",
-    "reasoning": true,
-    "input": [
-      "text"
-    ],
-    "cost": {
-      "input": 1,
-      "output": 3,
-      "cacheRead": 0.2,
-      "cacheWrite": 0
-    },
-    "contextWindow": 1048576,
-    "maxTokens": 128000
-  },
-  {
-    "id": "glm-5",
-    "name": "GLM-5",
-    "reasoning": true,
-    "input": [
-      "text"
-    ],
-    "cost": {
-      "input": 1,
-      "output": 3.2,
-      "cacheRead": 0.2,
-      "cacheWrite": 0
-    },
-    "contextWindow": 202752,
-    "maxTokens": 32768
-  },
-  {
-    "id": "mimo-v2.5",
-    "name": "MiMo V2.5",
-    "reasoning": true,
-    "input": [
-      "text",
-      "image",
-      "audio",
-      "video"
-    ],
-    "cost": {
-      "input": 0.4,
-      "output": 2,
-      "cacheRead": 0.08,
-      "cacheWrite": 0
-    },
-    "contextWindow": 1000000,
-    "maxTokens": 128000
-  },
-  {
-    "id": "qwen3.6-plus",
-    "name": "Qwen3.6 Plus",
+    "id": "qwen3.5-plus",
+    "name": "Qwen3.5 Plus",
     "reasoning": true,
     "input": [
       "text",
@@ -94,10 +27,10 @@
       "video"
     ],
     "cost": {
-      "input": 0.5,
-      "output": 3,
-      "cacheRead": 0.05,
-      "cacheWrite": 0.625
+      "input": 0.2,
+      "output": 1.2,
+      "cacheRead": 0.02,
+      "cacheWrite": 0.25
     },
     "contextWindow": 262144,
     "maxTokens": 65536
@@ -119,40 +52,6 @@
     "maxTokens": 32768
   },
   {
-    "id": "deepseek-v4-flash",
-    "name": "DeepSeek V4 Flash",
-    "reasoning": true,
-    "input": [
-      "text"
-    ],
-    "cost": {
-      "input": 0.14,
-      "output": 0.28,
-      "cacheRead": 0.0028,
-      "cacheWrite": 0
-    },
-    "contextWindow": 1000000,
-    "maxTokens": 384000
-  },
-  {
-    "id": "kimi-k2.6",
-    "name": "Kimi K2.6",
-    "reasoning": true,
-    "input": [
-      "text",
-      "image",
-      "video"
-    ],
-    "cost": {
-      "input": 0.95,
-      "output": 4,
-      "cacheRead": 0.16,
-      "cacheWrite": 0
-    },
-    "contextWindow": 262144,
-    "maxTokens": 65536
-  },
-  {
     "id": "deepseek-v4-pro",
     "name": "DeepSeek V4 Pro",
     "reasoning": true,
@@ -167,6 +66,22 @@
     },
     "contextWindow": 1000000,
     "maxTokens": 384000
+  },
+  {
+    "id": "mimo-v2.5-pro",
+    "name": "MiMo V2.5 Pro",
+    "reasoning": true,
+    "input": [
+      "text"
+    ],
+    "cost": {
+      "input": 1,
+      "output": 3,
+      "cacheRead": 0.2,
+      "cacheWrite": 0
+    },
+    "contextWindow": 1048576,
+    "maxTokens": 128000
   },
   {
     "id": "minimax-m2.5",
@@ -185,8 +100,24 @@
     "maxTokens": 65536
   },
   {
-    "id": "qwen3.5-plus",
-    "name": "Qwen3.5 Plus",
+    "id": "minimax-m2.7",
+    "name": "MiniMax M2.7",
+    "reasoning": true,
+    "input": [
+      "text"
+    ],
+    "cost": {
+      "input": 0.3,
+      "output": 1.2,
+      "cacheRead": 0.06,
+      "cacheWrite": 0
+    },
+    "contextWindow": 204800,
+    "maxTokens": 131072
+  },
+  {
+    "id": "qwen3.6-plus",
+    "name": "Qwen3.6 Plus",
     "reasoning": true,
     "input": [
       "text",
@@ -194,10 +125,79 @@
       "video"
     ],
     "cost": {
-      "input": 0.2,
-      "output": 1.2,
-      "cacheRead": 0.02,
-      "cacheWrite": 0.25
+      "input": 0.5,
+      "output": 3,
+      "cacheRead": 0.05,
+      "cacheWrite": 0.625
+    },
+    "contextWindow": 262144,
+    "maxTokens": 65536
+  },
+  {
+    "id": "mimo-v2.5",
+    "name": "MiMo V2.5",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image",
+      "audio",
+      "video"
+    ],
+    "cost": {
+      "input": 0.4,
+      "output": 2,
+      "cacheRead": 0.08,
+      "cacheWrite": 0
+    },
+    "contextWindow": 1000000,
+    "maxTokens": 128000
+  },
+  {
+    "id": "deepseek-v4-flash",
+    "name": "DeepSeek V4 Flash",
+    "reasoning": true,
+    "input": [
+      "text"
+    ],
+    "cost": {
+      "input": 0.14,
+      "output": 0.28,
+      "cacheRead": 0.0028,
+      "cacheWrite": 0
+    },
+    "contextWindow": 1000000,
+    "maxTokens": 384000
+  },
+  {
+    "id": "glm-5",
+    "name": "GLM-5",
+    "reasoning": true,
+    "input": [
+      "text"
+    ],
+    "cost": {
+      "input": 1,
+      "output": 3.2,
+      "cacheRead": 0.2,
+      "cacheWrite": 0
+    },
+    "contextWindow": 202752,
+    "maxTokens": 32768
+  },
+  {
+    "id": "kimi-k2.6",
+    "name": "Kimi K2.6",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image",
+      "video"
+    ],
+    "cost": {
+      "input": 0.95,
+      "output": 4,
+      "cacheRead": 0.16,
+      "cacheWrite": 0
     },
     "contextWindow": 262144,
     "maxTokens": 65536
