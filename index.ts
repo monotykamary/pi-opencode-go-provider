@@ -192,11 +192,18 @@ function cacheModels(models: JsonModel[]): void {
 }
 
 function mergeWithEmbedded(liveModels: JsonModel[], embeddedModels: JsonModel[]): JsonModel[] {
-  const embeddedIds = new Set(embeddedModels.map(m => m.id));
-  const result = [...embeddedModels];
-  for (const model of liveModels) {
-    if (!embeddedIds.has(model.id)) {
-      result.push(model);
+  const embeddedMap = new Map(embeddedModels.map(m => [m.id, m]));
+  const result: JsonModel[] = [];
+  for (const liveModel of liveModels) {
+    const embedded = embeddedMap.get(liveModel.id);
+    if (embedded) {
+      result.push({
+        ...liveModel,
+        ...embedded,
+        contextWindow: liveModel.contextWindow || embedded.contextWindow,
+      });
+    } else {
+      result.push(liveModel);
     }
   }
   return result;
