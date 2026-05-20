@@ -18,7 +18,7 @@ A [pi](https://github.com/badlogic/pi-mono) extension that registers [opencode-g
 Install directly from GitHub:
 
 ```bash
-pi install git:github.com/monotykamary/pi-opencode-go-provider
+pi install https://github.com/monotykamary/pi-opencode-go-provider
 ```
 
 Then set your API key and run pi:
