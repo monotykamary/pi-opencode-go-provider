@@ -132,7 +132,17 @@ function buildModels(base: JsonModel[], custom: JsonModel[], patch: PatchData): 
     }
   }
 
-  return Array.from(modelMap.values());
+  const result = Array.from(modelMap.values());
+  for (const model of result) {
+    if (model.reasoning && model.compat !== undefined) {
+      if (model.compat.supportsReasoningEffort === undefined) {
+        model.compat.supportsReasoningEffort = true;
+      }
+    } else if (model.reasoning) {
+      model.compat = { supportsReasoningEffort: true };
+    }
+  }
+  return result;
 }
 
 // ─── Stale-While-Revalidate Model Sync ────────────────────────────────────────
