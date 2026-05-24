@@ -280,16 +280,17 @@ export default function (pi: ExtensionAPI) {
     revalidateAbort?.abort();
     revalidateAbort = new AbortController();
     const signal = revalidateAbort.signal;
-    await resolveApiKey(ctx.modelRegistry);
-    revalidateModels(cachedApiKey, embeddedModels, signal).then((freshBase) => {
-      if (freshBase && !signal.aborted) {
-        pi.registerProvider("opencode-go", {
-          baseUrl: BASE_URL,
-          apiKey: "OPENCODE_API_KEY",
-          api: "openai-completions",
-          models: buildModels(freshBase, customModels, patches),
-        });
-      }
+    resolveApiKey(ctx.modelRegistry).then(() => {
+      revalidateModels(cachedApiKey, embeddedModels, signal).then((freshBase) => {
+        if (freshBase && !signal.aborted) {
+          pi.registerProvider("opencode-go", {
+            baseUrl: BASE_URL,
+            apiKey: "OPENCODE_API_KEY",
+            api: "openai-completions",
+            models: buildModels(freshBase, customModels, patches),
+          });
+        }
+      });
     });
   });
 
