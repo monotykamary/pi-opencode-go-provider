@@ -271,7 +271,7 @@ export default function (pi: ExtensionAPI) {
 
   pi.registerProvider("opencode-go", {
     baseUrl: BASE_URL,
-    apiKey: "OPENCODE_API_KEY",
+    apiKey: "$OPENCODE_API_KEY",
     api: "openai-completions",
     models: staleModels,
   });
@@ -285,7 +285,7 @@ export default function (pi: ExtensionAPI) {
         if (freshBase && !signal.aborted) {
           pi.registerProvider("opencode-go", {
             baseUrl: BASE_URL,
-            apiKey: "OPENCODE_API_KEY",
+            apiKey: "$OPENCODE_API_KEY",
             api: "openai-completions",
             models: buildModels(freshBase, customModels, patches),
           });
