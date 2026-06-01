@@ -4,7 +4,7 @@ A [pi](https://github.com/badlogic/pi-mono) extension that registers [opencode-g
 
 ## Features
 
-- **12 Optimized AI Models** - GLM-5, Kimi K2.5, and MiniMax M2.5
+- **13 Optimized AI Models** - GLM-5, Kimi K2.5, and MiniMax M2.5
 - **Fast & Efficient** - Go-optimized endpoints for lower latency
 - **Unified API** via opencode.ai's OpenAI-compatible completions endpoint
 - **Cost Tracking** with per-model pricing for budget management
@@ -64,12 +64,13 @@ pi
 | GLM-5.1 | Text | 203K | 33K | $1.40 | $4.40 |
 | Kimi K2.5 | Text + Image | 262K | 66K | $0.60 | $3.00 |
 | Kimi K2.6 | Text + Image | 262K | 66K | $0.95 | $4.00 |
-| MiMo V2.5 | Text + Image | 1.0M | 128K | $0.40 | $2.00 |
-| MiMo V2.5 Pro | Text | 1.0M | 128K | $1.00 | $3.00 |
+| MiMo V2.5 | Text + Image | 1.0M | 128K | $0.14 | $0.28 |
+| MiMo V2.5 Pro | Text | 1.0M | 128K | $1.74 | $3.48 |
 | MiniMax M2.5 | Text | 205K | 66K | $0.30 | $1.20 |
 | MiniMax M2.7 | Text | 205K | 131K | $0.30 | $1.20 |
-| Qwen3.5 Plus | Text + Image | 262K | 66K | $0.20 | $1.20 |
+| MiniMax M3 | Text + Image | 512K | 131K | $0.60 | $2.40 |
 | Qwen3.6 Plus | Text + Image | 262K | 66K | $0.50 | $3.00 |
+| Qwen3.7 Max | Text | 1.0M | 66K | $2.50 | $7.50 |
 *Costs are per million tokens. Prices subject to change - check [opencode.ai](https://opencode.ai) for current pricing.*
 
 ## Usage
