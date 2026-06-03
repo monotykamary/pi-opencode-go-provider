@@ -1,6 +1,17 @@
-# pi-opencode-go-provider
+<div align="center">
 
-A [pi](https://github.com/badlogic/pi-mono) extension that registers [opencode-go](https://opencode.ai/) as a custom provider. Access fast, efficient GLM, Kimi, and MiniMax models optimized for speed through a unified API.
+# 🟢 pi-opencode-go-provider
+
+**Fast GLM, Kimi & MiniMax via [opencode-go](https://opencode.ai/)**
+
+_Go-optimized endpoints for lower latency — 13 models for [pi](https://github.com/earendil-works/pi-coding-agent)._
+
+[![pi extension](https://img.shields.io/badge/pi-extension-blueviolet)](https://github.com/earendil-works/pi-coding-agent)
+[![license](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
+
+</div>
+
+---
 
 ## Features
 
