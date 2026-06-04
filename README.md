@@ -4,7 +4,7 @@
 
 **Fast GLM, Kimi & MiniMax via [opencode-go](https://opencode.ai/)**
 
-_Go-optimized endpoints for lower latency — 13 models for [pi](https://github.com/earendil-works/pi-coding-agent)._
+_Go-optimized endpoints for lower latency — 14+ models for [pi](https://github.com/earendil-works/pi-coding-agent)._
 
 [![pi extension](https://img.shields.io/badge/pi-extension-blueviolet)](https://github.com/earendil-works/pi-coding-agent)
 [![license](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
@@ -15,12 +15,11 @@ _Go-optimized endpoints for lower latency — 13 models for [pi](https://github.
 
 ## Features
 
-- **13 Optimized AI Models** - GLM-5, Kimi K2.5, and MiniMax M2.5
+- **14+ Optimized AI Models** - DeepSeek, GLM, Kimi, MiMo, MiniMax, and Qwen
+- **Multi-API Support** — uses the correct API protocol per model (Anthropic, OpenAI Completions)
 - **Fast & Efficient** - Go-optimized endpoints for lower latency
-- **Unified API** via opencode.ai's OpenAI-compatible completions endpoint
 - **Cost Tracking** with per-model pricing for budget management
-- **Reasoning Models** support for advanced reasoning capabilities
-- **Vision Support** for image-capable models
+- **Reasoning Models** with thinking level maps for proper effort control
 
 ## Installation
 
@@ -67,21 +66,22 @@ pi
 
 ## Available Models
 
-| Model | Type | Context | Max Tokens | Input Cost | Output Cost |
-|-------|------|---------|------------|------------|-------------|
-| DeepSeek V4 Flash | Text | 1.0M | 384K | $0.14 | $0.28 |
-| DeepSeek V4 Pro | Text | 1.0M | 384K | $1.74 | $3.48 |
-| GLM-5 | Text | 203K | 33K | $1.00 | $3.20 |
-| GLM-5.1 | Text | 203K | 33K | $1.40 | $4.40 |
-| Kimi K2.5 | Text + Image | 262K | 66K | $0.60 | $3.00 |
-| Kimi K2.6 | Text + Image | 262K | 66K | $0.95 | $4.00 |
-| MiMo V2.5 | Text + Image | 1.0M | 128K | $0.14 | $0.28 |
-| MiMo V2.5 Pro | Text | 1.0M | 128K | $1.74 | $3.48 |
-| MiniMax M2.5 | Text | 205K | 66K | $0.30 | $1.20 |
-| MiniMax M2.7 | Text | 205K | 131K | $0.30 | $1.20 |
-| MiniMax M3 | Text + Image | 512K | 131K | $0.60 | $2.40 |
-| Qwen3.6 Plus | Text + Image | 262K | 66K | $0.50 | $3.00 |
-| Qwen3.7 Max | Text | 1.0M | 66K | $2.50 | $7.50 |
+| Model | API | Type | Context | Max Tokens | Input Cost | Output Cost |
+|-------|-----|------|---------|------------|------------|-------------|
+| DeepSeek V4 Flash | Completions | Text | 1.0M | 384K | $0.14 | $0.28 |
+| DeepSeek V4 Pro | Completions | Text | 1.0M | 384K | $1.74 | $3.48 |
+| GLM-5 | Completions | Text | 203K | 33K | $1.00 | $3.20 |
+| GLM-5.1 | Completions | Text | 203K | 33K | $1.40 | $4.40 |
+| Kimi K2.5 | Completions | Text + Image | 262K | 66K | $0.60 | $3.00 |
+| Kimi K2.6 | Completions | Text + Image | 262K | 66K | $0.95 | $4.00 |
+| MiMo V2.5 | Completions | Text + Image | 1.0M | 128K | $0.14 | $0.28 |
+| MiMo V2.5 Pro | Completions | Text | 1.0M | 128K | $1.74 | $3.48 |
+| MiniMax M2.5 | Anthropic | Text | 205K | 66K | $0.30 | $1.20 |
+| MiniMax M2.7 | Anthropic | Text | 205K | 131K | $0.30 | $1.20 |
+| MiniMax M3 | Anthropic | Text + Image | 512K | 131K | $0.60 | $2.40 |
+| Qwen3.6 Plus | Anthropic | Text + Image | 262K | 66K | $0.50 | $3.00 |
+| Qwen3.7 Max | Anthropic | Text | 1.0M | 66K | $2.50 | $7.50 |
+| Qwen3.7 Plus | Anthropic | Text + Image | 262K | 66K | $0.40 | $1.60 |
 *Costs are per million tokens. Prices subject to change - check [opencode.ai](https://opencode.ai) for current pricing.*
 
 ## Usage

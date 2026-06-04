@@ -3,6 +3,9 @@
 /**
  * Script to update opencode-go models from models.dev API
  * Writes to models.json (Pi-native format) and updates README.md.
+ *
+ * Pipeline: models.dev API → models.json (idempotent, re-runnable)
+ *           patch.json + custom-models.json for our layered overrides
  */
 
 import https from 'https';
@@ -15,6 +18,12 @@ const __dirname = path.dirname(__filename);
 
 const API_URL = 'https://models.dev/api.json';
 const PROVIDER_ID = 'opencode-go';
+
+// Map models.dev provider.npm to pi API type and base URL
+const NPM_TO_API = {
+  '@ai-sdk/anthropic': { api: 'anthropic-messages', baseUrl: 'https://opencode.ai/zen/go' },
+};
+const DEFAULT_API = { api: 'openai-completions', baseUrl: 'https://opencode.ai/zen/go/v1' };
 
 // Fetch JSON from URL
 function fetchJSON(url) {
@@ -47,25 +56,38 @@ function formatNumber(num) {
   return num.toString();
 }
 
-// Get input types from modalities
+// Get input types from modalities (pi supports "text" and "image" only)
 function getInputTypes(modalities) {
-  const types = modalities?.input || ['text'];
-  const hasImage = types.includes('image');
-  const hasText = types.includes('text');
-  if (hasImage && hasText) return 'Text + Image';
-  if (hasImage) return 'Image';
-  return 'Text';
+  const raw = modalities?.input || ['text'];
+  const filtered = raw.filter(m => m === 'text' || m === 'image');
+  if (!filtered.includes('text')) filtered.unshift('text');
+  return filtered;
 }
 
-// Convert API model to Pi-native format
+// Get API label for display
+function getApiLabel(api) {
+  const labels = {
+    'anthropic-messages': 'Anthropic',
+    'openai-responses': 'Responses',
+    'openai-completions': 'Completions',
+    'google-generative-ai': 'Gemini',
+  };
+  return labels[api] || api;
+}
+
+// Convert API model to Pi-native format with per-model api/baseUrl
 function convertModel(model) {
-  const inputTypes = model.modalities?.input || ['text'];
+  const npm = model.provider?.npm;
+  const { api, baseUrl } = (npm && NPM_TO_API[npm]) || DEFAULT_API;
+  const inputTypes = getInputTypes(model.modalities);
   const cost = model.cost || {};
   const limit = model.limit || {};
 
   return {
     id: model.id,
     name: model.name,
+    api,
+    baseUrl,
     reasoning: model.reasoning || false,
     input: inputTypes,
     cost: {
@@ -82,7 +104,9 @@ function convertModel(model) {
 // Generate README model table row
 function generateReadmeRow(model) {
   const cost = model.cost || {};
-  return `| ${model.name} | ${getInputTypes({ input: model.input })} | ${formatNumber(model.contextWindow)} | ${formatNumber(model.maxTokens)} | ${formatCost(cost.input)} | ${formatCost(cost.output)} |`;
+  const hasImage = model.input.includes('image');
+  const typeLabel = hasImage ? 'Text + Image' : 'Text';
+  return `| ${model.name} | ${getApiLabel(model.api)} | ${typeLabel} | ${formatNumber(model.contextWindow)} | ${formatNumber(model.maxTokens)} | ${formatCost(cost.input)} | ${formatCost(cost.output)} |`;
 }
 
 // Update README model table
@@ -102,19 +126,27 @@ function updateReadme(models) {
 
   // Generate table rows
   const tableRows = sortedModels.map(generateReadmeRow).join('\n');
-  const newTable = `| Model | Type | Context | Max Tokens | Input Cost | Output Cost |
-|-------|------|---------|------------|------------|-------------|
+  const newTable = `| Model | API | Type | Context | Max Tokens | Input Cost | Output Cost |
+|-------|-----|------|---------|------------|------------|-------------|
 ${tableRows}`;
 
   // Replace table in README
-  const tableRegex = /\| Model \| Type \| Context \| Max Tokens \| Input Cost \| Output Cost \|[\s\S]*?(?=\n\*Costs are per million)/;
-  readme = readme.replace(tableRegex, newTable);
+  const tableRegex = /\| Model \| API \| Type \| Context \| Max Tokens \| Input Cost \| Output Cost \|[\s\S]*?(?=\n\*Costs are per million)/;
+  if (readme.match(tableRegex)) {
+    readme = readme.replace(tableRegex, newTable);
+  } else {
+    // Fallback: replace old 6-column table format
+    const oldTableRegex = /\| Model \| Type \| Context \| Max Tokens \| Input Cost \| Output Cost \|[\s\S]*?(?=\n\*Costs are per million)/;
+    if (readme.match(oldTableRegex)) {
+      readme = readme.replace(oldTableRegex, newTable);
+    }
+  }
 
   // Update model count in features
   readme = readme.replace(/\*\*\d+ Optimized AI Models\*\*/, `**${models.length} Optimized AI Models**`);
 
   fs.writeFileSync(readmePath, readme);
-  console.log(`✓ Updated README.md with ${models.length} models`);
+  console.log(`  Updated README.md with ${models.length} models`);
 }
 
 async function main() {
@@ -141,7 +173,7 @@ async function main() {
     const models = apiModels.map(convertModel);
     const modelsPath = path.join(process.cwd(), 'models.json');
     fs.writeFileSync(modelsPath, JSON.stringify(models, null, 2) + '\n');
-    console.log(`✓ Saved ${models.length} models to models.json`);
+    console.log(`  Saved ${models.length} models to models.json`);
 
     // Update README
     updateReadme(models);

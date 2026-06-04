@@ -1,8 +1,9 @@
 /**
  * opencode-go Provider Extension
  *
- * Registers opencode-go as a custom provider using the openai-completions API.
- * Base URL: https://opencode.ai/zen/go/v1
+ * Registers opencode-go as a custom provider with multi-API support.
+ * Models use anthropic-messages or openai-completions as appropriate,
+ * with per-model baseUrl/api.
  *
  * Model resolution strategy: Stale-While-Revalidate
  *   1. Serve stale immediately: disk cache → embedded models.json (zero-latency)
@@ -31,11 +32,20 @@ import path from "path";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+type Api = "openai-completions" | "openai-responses" | "anthropic-messages" | "google-generative-ai";
+
+interface ThinkingLevelMapValue {
+  [level: string]: string | null;
+}
+
 interface JsonModel {
   id: string;
   name: string;
+  api?: Api;
+  baseUrl?: string;
   reasoning: boolean;
-  input: string[];
+  thinkingLevelMap?: ThinkingLevelMapValue;
+  input: ("text" | "image")[];
   cost: {
     input: number;
     output: number;
@@ -44,19 +54,16 @@ interface JsonModel {
   };
   contextWindow: number;
   maxTokens: number;
-  compat?: {
-    supportsDeveloperRole?: boolean;
-    supportsStore?: boolean;
-    maxTokensField?: "max_completion_tokens" | "max_tokens";
-    thinkingFormat?: "openai" | "zai" | "qwen" | "qwen-chat-template";
-    supportsReasoningEffort?: boolean;
-  };
+  compat?: Record<string, unknown>;
 }
 
 interface PatchEntry {
   name?: string;
+  api?: Api;
+  baseUrl?: string;
   reasoning?: boolean;
-  input?: string[];
+  thinkingLevelMap?: ThinkingLevelMapValue;
+  input?: ("text" | "image")[];
   cost?: {
     input?: number;
     output?: number;
@@ -76,7 +83,10 @@ function applyPatch(model: JsonModel, patch: PatchEntry): JsonModel {
   const result = { ...model };
 
   if (patch.name !== undefined) result.name = patch.name;
+  if (patch.api !== undefined) result.api = patch.api;
+  if (patch.baseUrl !== undefined) result.baseUrl = patch.baseUrl;
   if (patch.reasoning !== undefined) result.reasoning = patch.reasoning;
+  if (patch.thinkingLevelMap !== undefined) result.thinkingLevelMap = patch.thinkingLevelMap;
   if (patch.input !== undefined) result.input = patch.input;
   if (patch.contextWindow !== undefined) result.contextWindow = patch.contextWindow;
   if (patch.maxTokens !== undefined) result.maxTokens = patch.maxTokens;
@@ -132,17 +142,7 @@ function buildModels(base: JsonModel[], custom: JsonModel[], patch: PatchData): 
     }
   }
 
-  const result = Array.from(modelMap.values());
-  for (const model of result) {
-    if (model.reasoning && model.compat !== undefined) {
-      if (model.compat.supportsReasoningEffort === undefined) {
-        model.compat.supportsReasoningEffort = true;
-      }
-    } else if (model.reasoning) {
-      model.compat = { supportsReasoningEffort: true };
-    }
-  }
-  return result;
+  return Array.from(modelMap.values());
 }
 
 // ─── Stale-While-Revalidate Model Sync ────────────────────────────────────────
@@ -154,16 +154,36 @@ const CACHE_DIR = path.join(os.homedir(), ".pi", "agent", "cache");
 const CACHE_PATH = path.join(CACHE_DIR, `${PROVIDER_ID}-models.json`);
 const LIVE_FETCH_TIMEOUT_MS = 8000;
 
+/** Map models.dev provider.npm to pi API type and base URL. */
+const NPM_TO_API: Record<string, { api: Api; baseUrl: string }> = {
+  "@ai-sdk/anthropic": { api: "anthropic-messages", baseUrl: "https://opencode.ai/zen/go" },
+};
+const DEFAULT_API: { api: Api; baseUrl: string } = { api: "openai-completions", baseUrl: "https://opencode.ai/zen/go/v1" };
+
 /** Transform a model from the opencode-go /v1/models API. Returns minimal data. */
 function transformApiModel(apiModel: any): JsonModel {
+  const npm = apiModel.provider?.npm;
+  const { api, baseUrl } = (npm && NPM_TO_API[npm]) || DEFAULT_API;
+  const rawInput = apiModel.modalities?.input || ["text"];
+  // Pi Model type only supports "text" and "image"
+  const input: ("text" | "image")[] = rawInput.filter((m: string) => m === "text" || m === "image") as ("text" | "image")[];
+  if (!input.includes("text")) input.unshift("text");
+
   return {
     id: apiModel.id,
-    name: apiModel.id,
-    reasoning: false,
-    input: ["text"],
-    cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
-    contextWindow: apiModel.context_length || 131072,
-    maxTokens: 0,
+    name: apiModel.name || apiModel.id,
+    api,
+    baseUrl,
+    reasoning: apiModel.reasoning || false,
+    input,
+    cost: {
+      input: apiModel.cost?.input || 0,
+      output: apiModel.cost?.output || 0,
+      cacheRead: apiModel.cost?.cache_read || 0,
+      cacheWrite: apiModel.cost?.cache_write || 0,
+    },
+    contextWindow: apiModel.limit?.context || apiModel.context_length || 131072,
+    maxTokens: apiModel.limit?.output || 0,
   };
 }
 
@@ -273,7 +293,19 @@ export default function (pi: ExtensionAPI) {
     baseUrl: BASE_URL,
     apiKey: "$OPENCODE_API_KEY",
     api: "openai-completions",
-    models: staleModels,
+    models: staleModels.map(m => ({
+      id: m.id,
+      name: m.name,
+      api: m.api || "openai-completions",
+      baseUrl: m.baseUrl,
+      reasoning: m.reasoning,
+      thinkingLevelMap: m.thinkingLevelMap,
+      input: m.input,
+      cost: m.cost,
+      contextWindow: m.contextWindow,
+      maxTokens: m.maxTokens,
+      compat: m.compat,
+    })),
   });
 
   pi.on("session_start", async (_event, ctx) => {
@@ -287,7 +319,19 @@ export default function (pi: ExtensionAPI) {
             baseUrl: BASE_URL,
             apiKey: "$OPENCODE_API_KEY",
             api: "openai-completions",
-            models: buildModels(freshBase, customModels, patches),
+            models: buildModels(freshBase, customModels, patches).map(m => ({
+              id: m.id,
+              name: m.name,
+              api: m.api || "openai-completions",
+              baseUrl: m.baseUrl,
+              reasoning: m.reasoning,
+              thinkingLevelMap: m.thinkingLevelMap,
+              input: m.input,
+              cost: m.cost,
+              contextWindow: m.contextWindow,
+              maxTokens: m.maxTokens,
+              compat: m.compat,
+            })),
           });
         }
       });
