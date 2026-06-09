@@ -10,9 +10,9 @@
       "image"
     ],
     "cost": {
-      "input": 0.6,
-      "output": 2.4,
-      "cacheRead": 0.12,
+      "input": 0.3,
+      "output": 1.2,
+      "cacheRead": 0.06,
       "cacheWrite": 0
     },
     "contextWindow": 512000,
@@ -71,7 +71,7 @@
       "cacheRead": 0.05,
       "cacheWrite": 0.625
     },
-    "contextWindow": 262144,
+    "contextWindow": 1000000,
     "maxTokens": 65536
   },
   {
@@ -162,7 +162,7 @@
       "cacheRead": 0.04,
       "cacheWrite": 0.5
     },
-    "contextWindow": 262144,
+    "contextWindow": 1000000,
     "maxTokens": 65536
   },
   {
