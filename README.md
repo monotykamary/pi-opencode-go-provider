@@ -78,10 +78,10 @@ pi
 | MiMo V2.5 Pro | Completions | Text | 1.0M | 128K | $1.74 | $3.48 |
 | MiniMax M2.5 | Anthropic | Text | 205K | 66K | $0.30 | $1.20 |
 | MiniMax M2.7 | Anthropic | Text | 205K | 131K | $0.30 | $1.20 |
-| MiniMax M3 | Anthropic | Text + Image | 512K | 131K | $0.60 | $2.40 |
-| Qwen3.6 Plus | Anthropic | Text + Image | 262K | 66K | $0.50 | $3.00 |
+| MiniMax M3 | Anthropic | Text + Image | 512K | 131K | $0.30 | $1.20 |
+| Qwen3.6 Plus | Anthropic | Text + Image | 1.0M | 66K | $0.50 | $3.00 |
 | Qwen3.7 Max | Anthropic | Text | 1.0M | 66K | $2.50 | $7.50 |
-| Qwen3.7 Plus | Anthropic | Text + Image | 262K | 66K | $0.40 | $1.60 |
+| Qwen3.7 Plus | Anthropic | Text + Image | 1.0M | 66K | $0.40 | $1.60 |
 *Costs are per million tokens. Prices subject to change - check [opencode.ai](https://opencode.ai) for current pricing.*
 
 ## Usage
