@@ -72,13 +72,12 @@ pi
 | DeepSeek V4 Pro | Completions | Text | 1.0M | 384K | $1.74 | $3.48 |
 | GLM-5 | Completions | Text | 203K | 33K | $1.00 | $3.20 |
 | GLM-5.1 | Completions | Text | 203K | 33K | $1.40 | $4.40 |
-| Kimi K2.5 | Completions | Text + Image | 262K | 66K | $0.60 | $3.00 |
 | Kimi K2.6 | Completions | Text + Image | 262K | 66K | $0.95 | $4.00 |
+| Kimi K2.7 Code | Completions | Text + Image | 262K | 262K | $0.95 | $4.00 |
 | MiMo V2.5 | Completions | Text + Image | 1.0M | 128K | $0.14 | $0.28 |
 | MiMo V2.5 Pro | Completions | Text | 1.0M | 128K | $1.74 | $3.48 |
-| MiniMax M2.5 | Anthropic | Text | 205K | 66K | $0.30 | $1.20 |
 | MiniMax M2.7 | Anthropic | Text | 205K | 131K | $0.30 | $1.20 |
-| MiniMax M3 | Anthropic | Text + Image | 512K | 131K | $0.30 | $1.20 |
+| MiniMax M3 (3x usage) | Anthropic | Text + Image | 512K | 131K | $0.10 | $0.40 |
 | Qwen3.6 Plus | Anthropic | Text + Image | 1.0M | 66K | $0.50 | $3.00 |
 | Qwen3.7 Max | Anthropic | Text | 1.0M | 66K | $2.50 | $7.50 |
 | Qwen3.7 Plus | Anthropic | Text + Image | 1.0M | 66K | $0.40 | $1.60 |
