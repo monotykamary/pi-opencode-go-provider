@@ -232,7 +232,7 @@ function mergeWithEmbedded(liveModels: JsonModel[], embeddedModels: JsonModel[])
       result.push({
         ...liveModel,
         ...embedded,
-        contextWindow: liveModel.contextWindow || embedded.contextWindow,
+        contextWindow: Math.max(liveModel.contextWindow || 0, embedded.contextWindow || 0),
       });
     } else {
       result.push(liveModel);
