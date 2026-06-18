@@ -70,8 +70,8 @@ pi
 |-------|-----|------|---------|------------|------------|-------------|
 | DeepSeek V4 Flash | Completions | Text | 1.0M | 384K | $0.14 | $0.28 |
 | DeepSeek V4 Pro | Completions | Text | 1.0M | 384K | $1.74 | $3.48 |
-| GLM-5 | Completions | Text | 203K | 33K | $1.00 | $3.20 |
 | GLM-5.1 | Completions | Text | 203K | 33K | $1.40 | $4.40 |
+| GLM-5.2 | Completions | Text | 1.0M | 131K | $1.40 | $4.40 |
 | Kimi K2.6 | Completions | Text + Image | 262K | 66K | $0.95 | $4.00 |
 | Kimi K2.7 Code | Completions | Text + Image | 262K | 262K | $0.95 | $4.00 |
 | MiMo V2.5 | Completions | Text + Image | 1.0M | 128K | $0.14 | $0.28 |
