@@ -20,8 +20,8 @@
   {
     "id": "qwen3.7-plus",
     "name": "Qwen3.7 Plus",
-    "api": "openai-completions",
-    "baseUrl": "https://opencode.ai/zen/go/v1",
+    "api": "anthropic-messages",
+    "baseUrl": "https://opencode.ai/zen/go",
     "reasoning": true,
     "input": [
       "text",
@@ -39,8 +39,8 @@
   {
     "id": "qwen3.7-max",
     "name": "Qwen3.7 Max",
-    "api": "openai-completions",
-    "baseUrl": "https://opencode.ai/zen/go/v1",
+    "api": "anthropic-messages",
+    "baseUrl": "https://opencode.ai/zen/go",
     "reasoning": true,
     "input": [
       "text"
@@ -143,7 +143,7 @@
       "cacheRead": 0.02,
       "cacheWrite": 0
     },
-    "contextWindow": 512000,
+    "contextWindow": 1000000,
     "maxTokens": 131072
   },
   {
@@ -223,8 +223,8 @@
   {
     "id": "qwen3.6-plus",
     "name": "Qwen3.6 Plus",
-    "api": "openai-completions",
-    "baseUrl": "https://opencode.ai/zen/go/v1",
+    "api": "anthropic-messages",
+    "baseUrl": "https://opencode.ai/zen/go",
     "reasoning": true,
     "input": [
       "text",
