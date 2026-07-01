@@ -182,7 +182,12 @@ function transformApiModel(apiModel: any): JsonModel {
       cacheRead: apiModel.cost?.cache_read || 0,
       cacheWrite: apiModel.cost?.cache_write || 0,
     },
-    contextWindow: apiModel.limit?.context || apiModel.context_length || 131072,
+    // The live /v1/models endpoint exposes only {id, object, created, owned_by}
+    // — no `limit`, no `context_length`. A literal `|| 131072` here used to make
+    // every "API silent" model truthy 131072, which then clobbered the curated
+    // 1M/262K values in mergeWithEmbedded via the `||` truthy check. Use `null`
+    // so the embedded curated value is preferred when the API is silent.
+    contextWindow: apiModel.limit?.context || apiModel.context_length || null,
     maxTokens: apiModel.limit?.output || 0,
   };
 }
@@ -243,7 +248,13 @@ function mergeWithEmbedded(liveModels: JsonModel[], embeddedModels: JsonModel[])
           cacheRead: liveModel.cost.cacheRead || embedded.cost.cacheRead,
           cacheWrite: liveModel.cost.cacheWrite || embedded.cost.cacheWrite,
         },
-        contextWindow: liveModel.contextWindow || embedded.contextWindow,
+        // Nullish coalesce: if the live API was silent (liveModel.contextWindow
+        // is null), fall through to the curated embedded value. The final
+        // `?? 131072` is the safe default for the rare case of a Custom-only
+        // model with neither live nor curated data. Using `||` here was the
+        // bug — it treated the API's 131072-fallback as authoritative and
+        // shadowed curated 1M/262K context windows.
+        contextWindow: liveModel.contextWindow ?? embedded.contextWindow ?? 131072,
       });
     } else {
       result.push(liveModel);
