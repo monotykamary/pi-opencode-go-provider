@@ -22,12 +22,11 @@
  * Then use /model to select from available models
  */
 
-import type { ExtensionAPI, ModelRegistry } from "@earendil-works/pi-coding-agent";
+import { getAgentDir, type ExtensionAPI, type ModelRegistry } from "@earendil-works/pi-coding-agent";
 import modelsData from "./models.json" with { type: "json" };
 import customModelsData from "./custom-models.json" with { type: "json" };
 import patchData from "./patch.json" with { type: "json" };
 import fs from "fs";
-import os from "os";
 import path from "path";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -150,7 +149,7 @@ function buildModels(base: JsonModel[], custom: JsonModel[], patch: PatchData): 
 const PROVIDER_ID = "opencode-go";
 const BASE_URL = "https://opencode.ai/zen/go/v1";
 const MODELS_URL = `${BASE_URL}/models`;
-const CACHE_DIR = path.join(os.homedir(), ".pi", "agent", "cache");
+const CACHE_DIR = path.join(getAgentDir(), "cache");
 const CACHE_PATH = path.join(CACHE_DIR, `${PROVIDER_ID}-models.json`);
 const LIVE_FETCH_TIMEOUT_MS = 8000;
 
