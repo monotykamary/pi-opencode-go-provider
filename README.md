@@ -93,17 +93,19 @@ After loading the extension, use the `/model` command in pi to select your prefe
 
 Then select "opencode-go" as the provider and choose from the available models.
 
+The default model for this provider is `kimi-k2.6` (matching pi core's built-in default); use `/model` to pick another.
+
 ## Authentication
 
-The opencode-go API key can be configured in multiple ways (resolved in this order):
+The opencode-go API key can be configured in multiple ways. Credentials are resolved in this order:
 
-1. **`auth.json`** (recommended) — Add to `~/.pi/agent/auth.json`:
+1. **CLI flag** — `--api-key` (highest priority, runtime override)
+2. **`auth.json`** (recommended) — Add to `~/.pi/agent/auth.json`:
    ```json
    { "opencode-go": { "type": "api_key", "key": "your-api-key" } }
    ```
-   The `key` field supports literal values, env var names, and shell commands (prefix with `!`). See [pi's auth file docs](https://github.com/badlogic/pi-mono) for details.
-2. **Runtime override** — Use the `--api-key` CLI flag
-3. **Environment variable** — Set `OPENCODE_API_KEY`
+   The `key` field supports literals, `$ENV_VAR`/`${ENV_VAR}` interpolation, and `!command` execution. See [pi's providers docs](https://github.com/earendil-works/pi-coding-agent/blob/main/docs/providers.md) for details.
+3. **Environment variable** — `OPENCODE_API_KEY`
 
 ## Environment Variables
 
