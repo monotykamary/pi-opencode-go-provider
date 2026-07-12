@@ -1,11 +1,11 @@
 {
   "deepseek-v4-flash": {
     "compat": { "requiresReasoningContentOnAssistantMessages": true, "thinkingFormat": "deepseek" },
-    "thinkingLevelMap": { "minimal": null, "low": null, "medium": null, "high": "high", "xhigh": "max" }
+    "thinkingLevelMap": { "minimal": null, "low": null, "medium": null, "high": "high", "max": "max" }
   },
   "deepseek-v4-pro": {
     "compat": { "requiresReasoningContentOnAssistantMessages": true, "thinkingFormat": "deepseek" },
-    "thinkingLevelMap": { "minimal": null, "low": null, "medium": null, "high": "high", "xhigh": "max" }
+    "thinkingLevelMap": { "minimal": null, "low": null, "medium": null, "high": "high", "max": "max" }
   },
   "kimi-k2.6": {
     "compat": { "thinkingFormat": "deepseek", "supportsReasoningEffort": false },
