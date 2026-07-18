@@ -9,9 +9,9 @@
       "text"
     ],
     "cost": {
-      "input": 1.74,
-      "output": 3.48,
-      "cacheRead": 0.0145,
+      "input": 0.435,
+      "output": 0.87,
+      "cacheRead": 0.003625,
       "cacheWrite": 0
     },
     "contextWindow": 1048576,
@@ -57,7 +57,7 @@
   },
   {
     "id": "kimi-k3",
-    "name": "Kimi K3",
+    "name": "Kimi K3 (2x usage)",
     "api": "openai-completions",
     "baseUrl": "https://opencode.ai/zen/go/v1",
     "reasoning": true,
@@ -159,9 +159,9 @@
       "text"
     ],
     "cost": {
-      "input": 1.74,
-      "output": 3.48,
-      "cacheRead": 0.0145,
+      "input": 0.435,
+      "output": 0.87,
+      "cacheRead": 0.003625,
       "cacheWrite": 0
     },
     "contextWindow": 1000000,
