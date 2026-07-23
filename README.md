@@ -73,6 +73,7 @@ pi
 | GLM-5.1 | Completions | Text | 203K | 33K | $1.40 | $4.40 |
 | GLM-5.2 | Completions | Text | 1.0M | 131K | $1.40 | $4.40 |
 | Grok 4.5 | Completions | Text + Image | 500K | 500K | $2.00 | $6.00 |
+| Hy3 | Completions | Text | 256K | 64K | $0.14 | $0.58 |
 | Kimi K2.6 | Completions | Text + Image | 262K | 66K | $0.95 | $4.00 |
 | Kimi K2.7 Code | Completions | Text + Image | 262K | 262K | $0.95 | $4.00 |
 | Kimi K3 (2x usage) | Completions | Text + Image | 1.0M | 131K | $3.00 | $15.00 |
