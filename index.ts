@@ -117,7 +117,10 @@ function applyPatch(model: JsonModel, patch: PatchEntry): JsonModel {
 function buildModels(base: JsonModel[], custom: JsonModel[], patch: PatchData): JsonModel[] {
   const modelMap = new Map<string, JsonModel>();
 
-  for (const model of base) {
+  // Seed with the base list plus grace-period deprecated models so patch.json
+  // entries apply to deprecated models exactly as while the model was live
+  // (withDeprecated keeps live data on id conflicts).
+  for (const model of withDeprecated(base)) {
     modelMap.set(model.id, model);
   }
 
@@ -334,7 +337,7 @@ export default function (pi: ExtensionAPI) {
     baseUrl: BASE_URL,
     apiKey: "$OPENCODE_API_KEY",
     api: "openai-completions",
-    models: withDeprecated(staleModels).map(m => ({
+    models: staleModels.map(m => ({
       id: m.id,
       name: m.name,
       api: m.api || "openai-completions",
@@ -361,7 +364,7 @@ export default function (pi: ExtensionAPI) {
             baseUrl: BASE_URL,
             apiKey: "$OPENCODE_API_KEY",
             api: "openai-completions",
-            models: withDeprecated(buildModels(freshBase, customModels, patches)).map(m => ({
+            models: buildModels(freshBase, customModels, patches).map(m => ({
               id: m.id,
               name: m.name,
               api: m.api || "openai-completions",
