@@ -38,7 +38,7 @@
   },
   {
     "id": "deepseek-v4-flash",
-    "name": "DeepSeek V4 Flash",
+    "name": "DeepSeek V4 Flash (New)",
     "api": "openai-completions",
     "baseUrl": "https://opencode.ai/zen/go/v1",
     "reasoning": true,
@@ -202,6 +202,25 @@
     "maxTokens": 128000
   },
   {
+    "id": "gpt-5.6-luna",
+    "name": "GPT-5.6 Luna (2x usage)",
+    "api": "openai-completions",
+    "baseUrl": "https://opencode.ai/zen/go/v1",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "cost": {
+      "input": 0.1,
+      "output": 0.6,
+      "cacheRead": 0.01,
+      "cacheWrite": 0.125
+    },
+    "contextWindow": 1050000,
+    "maxTokens": 128000
+  },
+  {
     "id": "grok-4.5",
     "name": "Grok 4.5",
     "api": "openai-completions",
@@ -241,7 +260,7 @@
   },
   {
     "id": "kimi-k3",
-    "name": "Kimi K3 (2x usage)",
+    "name": "Kimi K3",
     "api": "openai-completions",
     "baseUrl": "https://opencode.ai/zen/go/v1",
     "reasoning": true,
