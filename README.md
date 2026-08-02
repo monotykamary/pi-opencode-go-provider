@@ -68,21 +68,21 @@ pi
 
 | Model | API | Type | Context | Max Tokens | Input Cost | Output Cost |
 |-------|-----|------|---------|------------|------------|-------------|
-| DeepSeek V4 Flash (New) | Completions | Text | 1.0M | 384K | $0.14 | $0.28 |
+| DeepSeek V4 Flash | Completions | Text | 1.0M | 384K | $0.14 | $0.28 |
 | DeepSeek V4 Pro | Completions | Text | 1.0M | 384K | $0.43 | $0.87 |
 | GLM-5.1 | Completions | Text | 203K | 33K | $1.40 | $4.40 |
 | GLM-5.2 | Completions | Text | 1.0M | 131K | $1.40 | $4.40 |
 | GPT-5.6 Luna (2x usage) | Completions | Text + Image | 1.1M | 128K | $0.10 | $0.60 |
-| Grok 4.5 | Completions | Text + Image | 500K | 500K | $2.00 | $6.00 |
+| Grok 4.5 | Responses | Text + Image | 500K | 500K | $2.00 | $6.00 |
 | Hy3 | Completions | Text | 256K | 64K | $0.14 | $0.58 |
 | Kimi K2.6 | Completions | Text + Image | 262K | 66K | $0.95 | $4.00 |
 | Kimi K2.7 Code | Completions | Text + Image | 262K | 262K | $0.95 | $4.00 |
-| Kimi K3 | Completions | Text + Image | 1.0M | 131K | $3.00 | $15.00 |
+| Kimi K3 (2x usage) | Completions | Text + Image | 1.0M | 131K | $3.00 | $15.00 |
 | MiMo V2.5 | Completions | Text + Image | 1.0M | 128K | $0.14 | $0.28 |
 | MiMo V2.5 Pro | Completions | Text | 1.0M | 128K | $0.43 | $0.87 |
-| MiniMax-M2.7 | Anthropic | Text | 205K | 131K | $0.30 | $1.20 |
+| MiniMax-M2.7 | Completions | Text | 205K | 131K | $0.30 | $1.20 |
 | MiniMax-M3 | Anthropic | Text + Image | 1.0M | 131K | $0.30 | $1.20 |
-| Qwen3.6 Plus | Anthropic | Text + Image | 1.0M | 66K | $0.50 | $3.00 |
+| Qwen3.6 Plus | Completions | Text + Image | 1.0M | 66K | $0.50 | $3.00 |
 | Qwen3.7 Max | Anthropic | Text | 1.0M | 66K | $2.50 | $7.50 |
 | Qwen3.7 Plus | Anthropic | Text + Image | 1.0M | 66K | $0.40 | $1.60 |
 *Costs are per million tokens. Prices subject to change - check [opencode.ai](https://opencode.ai) for current pricing.*

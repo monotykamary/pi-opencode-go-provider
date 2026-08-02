@@ -1,17 +1,161 @@
 {
-  "deepseek-v4-flash": {
-    "compat": { "requiresReasoningContentOnAssistantMessages": true, "thinkingFormat": "deepseek" },
-    "thinkingLevelMap": { "minimal": null, "low": null, "medium": null, "high": "high", "max": "max" }
+  "glm-5.1": {
+    "compat": {
+      "supportsStore": false,
+      "supportsDeveloperRole": false,
+      "maxTokensField": "max_tokens"
+    }
   },
-  "deepseek-v4-pro": {
-    "compat": { "requiresReasoningContentOnAssistantMessages": true, "thinkingFormat": "deepseek" },
-    "thinkingLevelMap": { "minimal": null, "low": null, "medium": null, "high": "high", "max": "max" }
+  "deepseek-v4-flash": {
+    "name": "DeepSeek V4 Flash",
+    "thinkingLevelMap": {
+      "minimal": null,
+      "low": null,
+      "medium": null,
+      "high": "high",
+      "max": "max"
+    },
+    "compat": {
+      "supportsStore": false,
+      "supportsDeveloperRole": false,
+      "maxTokensField": "max_tokens",
+      "requiresReasoningContentOnAssistantMessages": true,
+      "thinkingFormat": "deepseek"
+    }
+  },
+  "minimax-m2.7": {
+    "api": "openai-completions",
+    "baseUrl": "https://opencode.ai/zen/go/v1",
+    "compat": {
+      "supportsStore": false,
+      "supportsDeveloperRole": false,
+      "maxTokensField": "max_tokens"
+    }
+  },
+  "glm-5.2": {
+    "thinkingLevelMap": {
+      "off": null,
+      "minimal": null,
+      "low": null,
+      "medium": null,
+      "high": "high",
+      "xhigh": null,
+      "max": "max"
+    },
+    "compat": {
+      "supportsStore": false,
+      "supportsDeveloperRole": false,
+      "maxTokensField": "max_tokens"
+    }
   },
   "kimi-k2.6": {
-    "compat": { "thinkingFormat": "deepseek", "supportsReasoningEffort": false },
-    "thinkingLevelMap": { "minimal": null, "low": null, "medium": null }
+    "thinkingLevelMap": {
+      "minimal": null,
+      "low": null,
+      "medium": null
+    },
+    "compat": {
+      "supportsStore": false,
+      "supportsDeveloperRole": false,
+      "thinkingFormat": "deepseek",
+      "supportsReasoningEffort": false,
+      "maxTokensField": "max_tokens",
+      "supportsLongCacheRetention": false
+    }
+  },
+  "hy3": {
+    "thinkingLevelMap": {
+      "off": "none",
+      "minimal": null,
+      "low": "low",
+      "medium": null,
+      "high": "high",
+      "xhigh": null,
+      "max": null
+    },
+    "compat": {
+      "supportsStore": false,
+      "supportsDeveloperRole": false,
+      "maxTokensField": "max_tokens"
+    }
+  },
+  "deepseek-v4-pro": {
+    "thinkingLevelMap": {
+      "minimal": null,
+      "low": null,
+      "medium": null,
+      "high": "high",
+      "max": "max"
+    },
+    "compat": {
+      "supportsStore": false,
+      "supportsDeveloperRole": false,
+      "maxTokensField": "max_tokens",
+      "requiresReasoningContentOnAssistantMessages": true,
+      "thinkingFormat": "deepseek"
+    }
+  },
+  "mimo-v2.5": {
+    "compat": {
+      "supportsStore": false,
+      "supportsDeveloperRole": false,
+      "maxTokensField": "max_tokens"
+    }
+  },
+  "grok-4.5": {
+    "api": "openai-responses",
+    "thinkingLevelMap": {
+      "off": null,
+      "minimal": null,
+      "low": "low",
+      "medium": "medium",
+      "high": "high",
+      "xhigh": null,
+      "max": null
+    },
+    "compat": {
+      "sessionAffinityFormat": "openai-nosession"
+    }
+  },
+  "kimi-k2.7-code": {
+    "compat": {
+      "supportsStore": false,
+      "supportsDeveloperRole": false,
+      "maxTokensField": "max_tokens"
+    }
+  },
+  "kimi-k3": {
+    "name": "Kimi K3 (2x usage)",
+    "thinkingLevelMap": {
+      "off": null,
+      "minimal": null,
+      "low": null,
+      "medium": null,
+      "high": null,
+      "xhigh": null,
+      "max": "max"
+    },
+    "compat": {
+      "supportsStore": false,
+      "supportsDeveloperRole": false,
+      "maxTokensField": "max_tokens"
+    }
+  },
+  "mimo-v2.5-pro": {
+    "compat": {
+      "supportsStore": false,
+      "supportsDeveloperRole": false,
+      "maxTokensField": "max_tokens"
+    }
   },
   "qwen3.6-plus": {
-    "compat": { "thinkingFormat": "qwen" }
+    "api": "openai-completions",
+    "baseUrl": "https://opencode.ai/zen/go/v1",
+    "compat": {
+      "supportsStore": false,
+      "supportsDeveloperRole": false,
+      "thinkingFormat": "qwen",
+      "maxTokensField": "max_tokens"
+    }
   }
 }

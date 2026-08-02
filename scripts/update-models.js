@@ -101,6 +101,46 @@ function convertModel(model) {
   };
 }
 
+// Load a layered JSON model file.
+function loadJson(fileName) {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(process.cwd(), fileName), 'utf8'));
+  } catch {
+    return fileName === 'patch.json' ? {} : [];
+  }
+}
+
+// Deep-merge patch overrides into a model for README documentation. The
+// generated models.json remains API-derived; only the displayed model map uses patches.
+function applyPatch(model, patch) {
+  if (!patch) return model;
+  const result = { ...model };
+  for (const [key, value] of Object.entries(patch)) {
+    if (key === 'cost' || key === 'compat' || key === 'thinkingLevelMap') {
+      result[key] = { ...(result[key] || {}), ...value };
+    } else {
+      result[key] = value;
+    }
+  }
+  if (!result.reasoning) {
+    delete result.thinkingLevelMap;
+    if (result.compat?.thinkingFormat) delete result.compat.thinkingFormat;
+  }
+  return result;
+}
+
+// Merge API models, patches, and custom models in the same order as index.ts.
+function buildModels(baseModels, customModels, patch) {
+  const byId = new Map(baseModels.map(model => [model.id, model]));
+  for (const [id, entry] of Object.entries(patch)) {
+    if (byId.has(id)) byId.set(id, applyPatch(byId.get(id), entry));
+  }
+  for (const model of customModels) {
+    byId.set(model.id, applyPatch(model, patch[model.id]));
+  }
+  return Array.from(byId.values());
+}
+
 // Generate README model table row
 function generateReadmeRow(model) {
   const cost = model.cost || {};
@@ -238,8 +278,10 @@ async function main() {
     fs.writeFileSync(modelsPath, JSON.stringify(models, null, 2) + '\n');
     console.log(`  Saved ${models.length} models to models.json`);
 
-    // Update README
-    updateReadme(models);
+    // Apply layered overrides for documentation: models.json → patch.json → custom-models.json.
+    const patch = loadJson('patch.json');
+    const customModels = Array.isArray(loadJson('custom-models.json')) ? loadJson('custom-models.json') : [];
+    updateReadme(buildModels(models, customModels, patch));
 
     console.log('\nDone!');
   } catch (error) {
