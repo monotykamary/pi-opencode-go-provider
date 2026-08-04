@@ -85,6 +85,7 @@ pi
 | Qwen3.6 Plus | Completions | Text + Image | 1.0M | 66K | $0.50 | $3.00 |
 | Qwen3.7 Max | Anthropic | Text | 1.0M | 66K | $2.50 | $7.50 |
 | Qwen3.7 Plus | Anthropic | Text + Image | 1.0M | 66K | $0.40 | $1.60 |
+| Qwen3.8 Max | Anthropic | Text + Image | 1.0M | 131K | $2.00 | $6.00 |
 *Costs are per million tokens. Prices subject to change - check [opencode.ai](https://opencode.ai) for current pricing.*
 
 ## Usage

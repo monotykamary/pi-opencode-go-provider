@@ -183,6 +183,25 @@
     "maxTokens": 384000
   },
   {
+    "id": "qwen3.8-max",
+    "name": "Qwen3.8 Max",
+    "api": "anthropic-messages",
+    "baseUrl": "https://opencode.ai/zen/go",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "cost": {
+      "input": 2,
+      "output": 6,
+      "cacheRead": 0.25,
+      "cacheWrite": 2.5
+    },
+    "contextWindow": 1000000,
+    "maxTokens": 131072
+  },
+  {
     "id": "mimo-v2.5",
     "name": "MiMo V2.5",
     "api": "openai-completions",
