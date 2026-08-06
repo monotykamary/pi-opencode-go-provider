@@ -52,7 +52,9 @@ interface JsonModel {
     cacheRead: number;
     cacheWrite: number;
   };
-  contextWindow: number;
+  // null between transformApiModel and mergeWithEmbedded: the live /v1/models
+  // API omits context data; null = "API silent, prefer curated/default".
+  contextWindow: number | null;
   maxTokens: number;
   compat?: Record<string, unknown>;
 }
@@ -328,7 +330,7 @@ export default function (pi: ExtensionAPI) {
       thinkingLevelMap: m.thinkingLevelMap,
       input: m.input,
       cost: m.cost,
-      contextWindow: m.contextWindow,
+      contextWindow: m.contextWindow ?? 131072,
       maxTokens: m.maxTokens,
       compat: m.compat,
     })),
@@ -354,7 +356,7 @@ export default function (pi: ExtensionAPI) {
               thinkingLevelMap: m.thinkingLevelMap,
               input: m.input,
               cost: m.cost,
-              contextWindow: m.contextWindow,
+              contextWindow: m.contextWindow ?? 131072,
               maxTokens: m.maxTokens,
               compat: m.compat,
             })),
