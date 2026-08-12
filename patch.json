@@ -148,6 +148,21 @@
       "maxTokensField": "max_tokens"
     }
   },
+  "gpt-5.6-luna": {
+    "api": "openai-responses",
+    "thinkingLevelMap": {
+      "off": null,
+      "minimal": null,
+      "low": "low",
+      "medium": "medium",
+      "high": "high",
+      "xhigh": "xhigh",
+      "max": "max"
+    },
+    "compat": {
+      "sessionAffinityFormat": "openai-nosession"
+    }
+  },
   "qwen3.6-plus": {
     "api": "openai-completions",
     "baseUrl": "https://opencode.ai/zen/go/v1",
