@@ -69,7 +69,7 @@ pi
 | Model | API | Type | Context | Max Tokens | Input Cost | Output Cost |
 |-------|-----|------|---------|------------|------------|-------------|
 | DeepSeek V4 Flash | Completions | Text | 1.0M | 384K | $0.07 | $0.14 |
-| DeepSeek V4 Pro | Completions | Text | 1.0M | 384K | $0.43 | $0.87 |
+| DeepSeek V4 Pro (New) | Completions | Text | 1.0M | 384K | $0.43 | $0.87 |
 | GLM-5.1 | Completions | Text | 203K | 33K | $1.40 | $4.40 |
 | GLM-5.2 | Completions | Text | 1.0M | 131K | $1.40 | $4.40 |
 | GPT-5.6 Luna (2x usage) | Responses | Text + Image | 1.1M | 128K | $0.10 | $0.60 |
