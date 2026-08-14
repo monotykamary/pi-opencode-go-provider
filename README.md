@@ -72,6 +72,7 @@ pi
 | DeepSeek V4 Pro (New) | Completions | Text | 1.0M | 384K | $0.43 | $0.87 |
 | GLM-5.1 | Completions | Text | 203K | 33K | $1.40 | $4.40 |
 | GLM-5.2 | Completions | Text | 1.0M | 131K | $1.40 | $4.40 |
+| GLM-5.3 | Completions | Text | 1.0M | 131K | $1.40 | $4.40 |
 | GPT-5.6 Luna (2x usage) | Responses | Text + Image | 1.1M | 128K | $0.10 | $0.60 |
 | Grok 4.5 | Responses | Text + Image | 500K | 500K | $2.00 | $6.00 |
 | Hy3 | Completions | Text | 256K | 64K | $0.14 | $0.58 |
