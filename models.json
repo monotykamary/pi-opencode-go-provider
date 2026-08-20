@@ -131,7 +131,7 @@
   },
   {
     "id": "gpt-5.6-luna",
-    "name": "GPT-5.6 Luna (2x usage)",
+    "name": "GPT-5.6 Luna",
     "api": "openai-completions",
     "baseUrl": "https://opencode.ai/zen/go/v1",
     "reasoning": true,
@@ -140,10 +140,10 @@
       "image"
     ],
     "cost": {
-      "input": 0.1,
-      "output": 0.6,
-      "cacheRead": 0.01,
-      "cacheWrite": 0.125
+      "input": 0.2,
+      "output": 1.2,
+      "cacheRead": 0.02,
+      "cacheWrite": 0.25
     },
     "contextWindow": 1050000,
     "maxTokens": 128000
@@ -316,7 +316,7 @@
   },
   {
     "id": "hy3",
-    "name": "Hy3",
+    "name": "Hy3 (8x usage)",
     "api": "openai-completions",
     "baseUrl": "https://opencode.ai/zen/go/v1",
     "reasoning": true,
@@ -324,13 +324,32 @@
       "text"
     ],
     "cost": {
-      "input": 0.14,
-      "output": 0.58,
-      "cacheRead": 0.035,
+      "input": 0.0175,
+      "output": 0.0725,
+      "cacheRead": 0.004375,
       "cacheWrite": 0
     },
     "contextWindow": 256000,
     "maxTokens": 64000
+  },
+  {
+    "id": "muse-spark-1.2-contributor",
+    "name": "Muse Spark 1.2 Contributor",
+    "api": "openai-completions",
+    "baseUrl": "https://opencode.ai/zen/go/v1",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "cost": {
+      "input": 0.1,
+      "output": 0.2,
+      "cacheRead": 0.002,
+      "cacheWrite": 0
+    },
+    "contextWindow": 1048576,
+    "maxTokens": 131072
   },
   {
     "id": "kimi-k2.6",
