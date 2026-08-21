@@ -84,6 +84,7 @@ pi
 | MiniMax-M2.7 | Completions | Text | 205K | 131K | $0.30 | $1.20 |
 | MiniMax-M3 | Anthropic | Text + Image | 1.0M | 131K | $0.30 | $1.20 |
 | Muse Spark 1.2 Contributor | Completions | Text + Image | 1.0M | 131K | $0.10 | $0.20 |
+| Ox Alpha Free (Unlimited) | Completions | Text + Image | 1.0M | 131K | — | — |
 | Qwen3.6 Plus | Completions | Text + Image | 1.0M | 66K | $0.50 | $3.00 |
 | Qwen3.7 Max | Completions | Text | 1.0M | 66K | $2.50 | $7.50 |
 | Qwen3.7 Plus | Completions | Text + Image | 1.0M | 66K | $0.40 | $1.60 |
