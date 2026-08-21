@@ -64,6 +64,28 @@ function getInputTypes(modalities) {
   if (!filtered.includes('text')) filtered.unshift('text');
   return filtered;
 }
+// Canonical pi thinking levels, in picker order. A null entry excludes a level
+// from the picker; a string maps the pi level to the API effort value (identity
+// here, since models.dev reasoning_options values are the raw effort strings).
+const PI_THINKING_LEVELS = ["off", "minimal", "low", "medium", "high", "xhigh", "max"];
+
+// Derive a thinking-level map from models.dev reasoning_options so models that
+// declare effort values (e.g. ox-alpha: low/high/max) get real picker levels
+// without a hand-written patch.json entry. Unadvertised levels and "off" (models
+// that cannot disable thinking, like ox-alpha) map to null.
+function getThinkingLevelMap(model) {
+  if (!model.reasoning) return undefined;
+  const effort = (model.reasoning_options || []).find((o) => o && o.type === "effort");
+  const values = effort && Array.isArray(effort.values) ? effort.values.filter((v) => typeof v === "string") : [];
+  if (values.length === 0) return undefined;
+  const supported = new Set(values);
+  const map = {};
+  for (const level of PI_THINKING_LEVELS) {
+    map[level] = supported.has(level) ? level : null;
+  }
+  return map;
+}
+
 
 // Get API label for display
 function getApiLabel(api) {
@@ -90,6 +112,9 @@ function convertModel(model) {
     api,
     baseUrl,
     reasoning: model.reasoning || false,
+    // JSON.stringify drops undefined-valued keys, so models without effort
+    // metadata simply emit no thinkingLevelMap field.
+    thinkingLevelMap: getThinkingLevelMap(model),
     input: inputTypes,
     cost: {
       input: cost.input || 0,
