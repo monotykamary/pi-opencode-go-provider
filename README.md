@@ -80,6 +80,7 @@ pi
 | Kimi K2.6 | Completions | Text + Image | 262K | 66K | $0.95 | $4.00 |
 | Kimi K2.7 Code | Completions | Text + Image | 262K | 262K | $0.95 | $4.00 |
 | Kimi K3 (2x usage) | Completions | Text + Image | 1.0M | 131K | $3.00 | $15.00 |
+| LongCat-2.0 | Completions | Text | 1.0M | 131K | $0.30 | $1.20 |
 | MiMo V2.5 | Completions | Text + Image | 1.0M | 128K | $0.14 | $0.28 |
 | MiMo V2.5 Pro | Completions | Text | 1.0M | 128K | $0.43 | $0.87 |
 | MiniMax-M2.7 | Completions | Text | 205K | 131K | $0.30 | $1.20 |

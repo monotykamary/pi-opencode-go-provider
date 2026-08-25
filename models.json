@@ -351,6 +351,24 @@
     "maxTokens": 131072
   },
   {
+    "id": "longcat-2.0",
+    "name": "LongCat-2.0",
+    "api": "openai-completions",
+    "baseUrl": "https://opencode.ai/zen/go/v1",
+    "reasoning": true,
+    "input": [
+      "text"
+    ],
+    "cost": {
+      "input": 0.3,
+      "output": 1.2,
+      "cacheRead": 0.006,
+      "cacheWrite": 0
+    },
+    "contextWindow": 1000000,
+    "maxTokens": 131072
+  },
+  {
     "id": "qwen3.6-plus",
     "name": "Qwen3.6 Plus",
     "api": "openai-completions",
