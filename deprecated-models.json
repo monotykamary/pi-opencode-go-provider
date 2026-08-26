@@ -1,1 +1,31 @@
-{}
+{
+  "grok-4.5": {
+    "id": "grok-4.5",
+    "name": "Grok 4.5",
+    "api": "openai-completions",
+    "baseUrl": "https://opencode.ai/zen/go/v1",
+    "reasoning": true,
+    "thinkingLevelMap": {
+      "off": null,
+      "minimal": null,
+      "low": "low",
+      "medium": "medium",
+      "high": "high",
+      "xhigh": null,
+      "max": null
+    },
+    "input": [
+      "text",
+      "image"
+    ],
+    "cost": {
+      "input": 2,
+      "output": 6,
+      "cacheRead": 0.5,
+      "cacheWrite": 0
+    },
+    "contextWindow": 500000,
+    "maxTokens": 500000,
+    "deprecatedAt": "2026-08-26T02:00:24.732Z"
+  }
+}
