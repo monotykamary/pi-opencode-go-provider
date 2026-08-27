@@ -269,34 +269,6 @@
     "maxTokens": 65536
   },
   {
-    "id": "ox-alpha-free",
-    "name": "Ox Alpha Free (Unlimited)",
-    "api": "openai-completions",
-    "baseUrl": "https://opencode.ai/zen/go/v1",
-    "reasoning": true,
-    "thinkingLevelMap": {
-      "off": null,
-      "minimal": null,
-      "low": "low",
-      "medium": null,
-      "high": "high",
-      "xhigh": null,
-      "max": "max"
-    },
-    "input": [
-      "text",
-      "image"
-    ],
-    "cost": {
-      "input": 0,
-      "output": 0,
-      "cacheRead": 0,
-      "cacheWrite": 0
-    },
-    "contextWindow": 1000000,
-    "maxTokens": 131072
-  },
-  {
     "id": "glm-5.3",
     "name": "GLM-5.3",
     "api": "openai-completions",
@@ -524,5 +496,33 @@
     },
     "contextWindow": 1000000,
     "maxTokens": 384000
+  },
+  {
+    "id": "glm-5.3-flash",
+    "name": "GLM-5.3-Flash (2x usage)",
+    "api": "openai-completions",
+    "baseUrl": "https://opencode.ai/zen/go/v1",
+    "reasoning": true,
+    "thinkingLevelMap": {
+      "off": null,
+      "minimal": null,
+      "low": "low",
+      "medium": null,
+      "high": "high",
+      "xhigh": null,
+      "max": "max"
+    },
+    "input": [
+      "text",
+      "image"
+    ],
+    "cost": {
+      "input": 0.075,
+      "output": 0.25,
+      "cacheRead": 0.015,
+      "cacheWrite": 0
+    },
+    "contextWindow": 1000000,
+    "maxTokens": 131072
   }
 ]
