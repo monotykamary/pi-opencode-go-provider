@@ -1,6 +1,6 @@
 {
   "name": "pi-opencode-go-provider",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Opencode Go provider extension for pi - Fast, efficient GLM, Kimi, and MiniMax models through the opencode.ai API",
   "type": "module",
   "main": "index.ts",
