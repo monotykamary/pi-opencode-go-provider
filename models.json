@@ -461,7 +461,7 @@
   },
   {
     "id": "hy3",
-    "name": "Hy3 (8x usage)",
+    "name": "Hy3",
     "api": "openai-completions",
     "baseUrl": "https://opencode.ai/zen/go/v1",
     "reasoning": true,
@@ -478,9 +478,9 @@
       "text"
     ],
     "cost": {
-      "input": 0.0175,
-      "output": 0.0725,
-      "cacheRead": 0.004375,
+      "input": 0.14,
+      "output": 0.58,
+      "cacheRead": 0.035,
       "cacheWrite": 0
     },
     "contextWindow": 256000,
