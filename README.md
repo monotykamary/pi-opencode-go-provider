@@ -20,6 +20,7 @@ _Go-optimized endpoints for lower latency — 14+ models for [pi](https://github
 - **Fast & Efficient** - Go-optimized endpoints for lower latency
 - **Cost Tracking** with per-model pricing for budget management
 - **Reasoning Models** with thinking level maps for proper effort control
+- **Prompt-cache session affinity** — sends `x-opencode-session` and `x-opencode-client` so OpenCode Go can pin a session to the same cache node
 
 ## Installation
 

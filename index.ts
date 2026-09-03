@@ -339,7 +339,40 @@ async function resolveApiKey(modelRegistry: ModelRegistry): Promise<void> {
   cachedApiKey = await modelRegistry.getApiKeyForProvider("opencode-go") ?? undefined;
 }
 
-// ─── Extension Entry Point ────────────────────────────────────────────────────
+// OpenCode Go prompt-cache routing headers.
+// Pi core already injects these in mergeProviderAttributionHeaders for
+// provider "opencode-go" / host opencode.ai (see #4847). This hook is a
+// backstop: it fills them only when missing, so older pi builds and any
+// request path that skipped transformHeaders still pin the session.
+// Per-request via before_provider_headers — not registerProvider.headers —
+// because provider-wide headers leak to raw helper streams
+// (getApiKeyAndHeaders) that must not inherit the main session's cache
+// lineage. No custom streamSimple is needed; headers are applied before
+// provider dispatch.
+const OPENCODE_SESSION_HEADER = "x-opencode-session";
+const OPENCODE_CLIENT_HEADER = "x-opencode-client";
+const OPENCODE_CLIENT = "pi";
+
+function headerLookup(headers: Record<string, string | null | undefined>, name: string): string | undefined {
+  const lower = name.toLowerCase();
+  for (const [key, value] of Object.entries(headers)) {
+    if (key.toLowerCase() === lower) return value ?? undefined;
+  }
+  return undefined;
+}
+
+export function applyOpenCodeSessionHeaders(
+  headers: Record<string, string | null>,
+  sessionId: string | undefined,
+): Record<string, string | null> {
+  if (sessionId && !headerLookup(headers, OPENCODE_SESSION_HEADER)) {
+    headers[OPENCODE_SESSION_HEADER] = sessionId;
+  }
+  if (!headerLookup(headers, OPENCODE_CLIENT_HEADER)) {
+    headers[OPENCODE_CLIENT_HEADER] = OPENCODE_CLIENT;
+  }
+  return headers;
+}
 
 export default function (pi: ExtensionAPI) {
   const embeddedModels = modelsData as JsonModel[];
@@ -367,6 +400,11 @@ export default function (pi: ExtensionAPI) {
       maxTokens: m.maxTokens,
       compat: m.compat,
     })),
+  });
+
+  pi.on("before_provider_headers", (event, ctx) => {
+    if (ctx.model?.provider !== PROVIDER_ID) return;
+    applyOpenCodeSessionHeaders(event.headers, ctx.sessionManager.getSessionId());
   });
 
   pi.on("session_start", async (_event, ctx) => {
