@@ -77,7 +77,7 @@ pi
 | GLM-5.3-Flash (2x usage) | Completions | Text + Image | 1.0M | 131K | $0.07 | $0.25 |
 | GPT-5.6 Luna | Responses | Text + Image | 1.1M | 128K | $0.20 | $1.20 |
 | Grok 4.6 | Completions | Text + Image | 500K | 500K | $2.00 | $6.00 |
-| Hy3 | Completions | Text | 256K | 64K | $0.14 | $0.58 |
+| Hy3 | Completions | Text | 256K | 128K | $0.14 | $0.58 |
 | Hy4 preview | Completions | Text | 1.0M | 64K | $0.83 | $2.50 |
 | Kimi K2.6 | Completions | Text + Image | 262K | 66K | $0.95 | $4.00 |
 | Kimi K2.7 Code | Completions | Text + Image | 262K | 262K | $0.95 | $4.00 |
@@ -88,6 +88,7 @@ pi
 | MiniMax-M2.7 | Completions | Text | 205K | 131K | $0.30 | $1.20 |
 | MiniMax-M3 | Anthropic | Text + Image | 1.0M | 131K | $0.30 | $1.20 |
 | Muse Spark 1.2 Contributor | Completions | Text + Image | 1.0M | 131K | $0.10 | $0.20 |
+| Muse Spark 1.3 Contributor | Completions | Text + Image | 1.0M | 131K | $0.10 | $0.20 |
 | Qwen3.6 Plus | Completions | Text + Image | 1.0M | 66K | $0.50 | $3.00 |
 | Qwen3.7 Max | Completions | Text | 1.0M | 66K | $2.50 | $7.50 |
 | Qwen3.7 Plus | Completions | Text + Image | 1.0M | 66K | $0.40 | $1.60 |
