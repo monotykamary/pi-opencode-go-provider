@@ -90,6 +90,7 @@ pi
 | MiniMax-M3 | Anthropic | Text + Image | 1.0M | 131K | $0.30 | $1.20 |
 | Muse Spark 1.2 Contributor | Responses | Text + Image | 1.0M | 131K | $0.10 | $0.20 |
 | Muse Spark 1.3 Contributor | Responses | Text + Image | 1.0M | 131K | $0.10 | $0.20 |
+| Omen Alpha | Completions | Text + Image | 500K | 128K | $0.20 | $0.66 |
 | Qwen3.6 Plus | Completions | Text + Image | 1.0M | 66K | $0.50 | $3.00 |
 | Qwen3.7 Max | Completions | Text | 1.0M | 66K | $2.50 | $7.50 |
 | Qwen3.7 Plus | Completions | Text + Image | 1.0M | 66K | $0.40 | $1.60 |
