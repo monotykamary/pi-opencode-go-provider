@@ -75,7 +75,7 @@ pi
 | GLM-5.1 | Completions | Text | 203K | 33K | $1.40 | $4.40 |
 | GLM-5.2 | Completions | Text | 1.0M | 131K | $1.40 | $4.40 |
 | GLM-5.3 | Completions | Text | 1.0M | 131K | $1.40 | $4.40 |
-| GLM-5.3-Flash (2x usage) | Completions | Text + Image | 1.0M | 131K | $0.07 | $0.25 |
+| GLM-5.3-Flash | Completions | Text + Image | 1.0M | 131K | $0.15 | $0.50 |
 | GPT-5.6 Luna | Responses | Text + Image | 1.1M | 128K | $0.20 | $1.20 |
 | Grok 4.6 | Completions | Text + Image | 500K | 500K | $2.00 | $6.00 |
 | Hy3 | Completions | Text | 256K | 128K | $0.14 | $0.58 |
