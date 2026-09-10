@@ -42,6 +42,23 @@
       "thinkingFormat": "deepseek"
     }
   },
+  "deepseek-flash": {
+    "name": "DeepSeek V4.1 Flash",
+    "thinkingLevelMap": {
+      "minimal": null,
+      "low": null,
+      "medium": null,
+      "high": "high",
+      "max": "max"
+    },
+    "compat": {
+      "supportsStore": false,
+      "supportsDeveloperRole": false,
+      "maxTokensField": "max_tokens",
+      "requiresReasoningContentOnAssistantMessages": true,
+      "thinkingFormat": "deepseek"
+    }
+  },
   "minimax-m2.7": {
     "api": "openai-completions",
     "baseUrl": "https://opencode.ai/zen/go/v1",
