@@ -7,8 +7,10 @@
   "scripts": {
     "clean": "echo 'nothing to clean'",
     "build": "echo 'nothing to build'",
-    "check": "echo 'nothing to check'",
-    "update-models": "node scripts/update-models.js"
+    "check": "npm run typecheck && npm run test",
+    "update-models": "node scripts/update-models.js",
+    "test": "node --test",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "pi",
@@ -30,6 +32,8 @@
     ]
   },
   "devDependencies": {
-    "@earendil-works/pi-coding-agent": "0.85.1"
+    "@earendil-works/pi-coding-agent": "0.85.1",
+    "@types/node": "~22.19.0",
+    "typescript": "^6.0.3"
   }
 }

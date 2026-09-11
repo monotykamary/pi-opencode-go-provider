@@ -22,7 +22,17 @@
  * Then use /model to select from available models
  */
 
-import { getAgentDir, type ExtensionAPI, type ModelRegistry } from "@earendil-works/pi-coding-agent";
+import {
+  getAgentDir,
+  type ExtensionAPI,
+  type ExtensionContext,
+  type ModelRegistry,
+  type ThemeColor,
+} from "@earendil-works/pi-coding-agent";
+import { USAGE_WIDGET_KEY, readUsageConfig, writeUsageConfig } from "./config.ts";
+import { sanitizeStatusText, truncateToWidth } from "./format.ts";
+import { usageSegments, type UsageSegment, type UsageSeverity } from "./usage.ts";
+import { UsageController } from "./usage-controller.ts";
 import modelsData from "./models.json" with { type: "json" };
 import customModelsData from "./custom-models.json" with { type: "json" };
 import patchData from "./patch.json" with { type: "json" };
@@ -402,12 +412,105 @@ export default function (pi: ExtensionAPI) {
     })),
   });
 
+  // Usage widget (5h / 7d / 30d).
+  // opencode-go meters the Go plan with a rolling 5h window, a weekly window and
+  // a monthly window. GET /zen/go/v1/usage publishes all three. The widget below
+  // the editor mirrors pi-better-openai's usage widget; the footer status line is
+  // the fallback when no terminal UI is attached.
+
+  let usageConfig = readUsageConfig();
+  let usageWidgetInstalled = false;
+  const usageController = new UsageController(() => usageConfig, updateUsageWidget);
+
+  const USAGE_SEVERITY_COLORS: Record<UsageSeverity, ThemeColor> = {
+    ok: "success",
+    warning: "warning",
+    critical: "error",
+    muted: "dim",
+  };
+
+  function usageSegmentsFor(ctx: ExtensionContext): UsageSegment[] | undefined {
+    const snapshot = usageController.snapshot;
+    if (!snapshot || !usageConfig.enabled || !usageController.isEligible(ctx)) return undefined;
+    const segments = usageSegments(snapshot, { showResetTimes: usageConfig.showResetTimes });
+    if (usageController.isStale()) segments.push({ text: " · stale", severity: "warning" });
+    return segments;
+  }
+
+  function updateUsageWidget(ctx: ExtensionContext): void {
+    try {
+      const segments = usageSegmentsFor(ctx);
+      if (!segments) {
+        if (usageWidgetInstalled) {
+          ctx.ui.setWidget(USAGE_WIDGET_KEY, undefined);
+          ctx.ui.setStatus(USAGE_WIDGET_KEY, undefined);
+          usageWidgetInstalled = false;
+        }
+        return;
+      }
+      if (ctx.mode === "tui") {
+        ctx.ui.setStatus(USAGE_WIDGET_KEY, undefined);
+        ctx.ui.setWidget(
+          USAGE_WIDGET_KEY,
+          (_tui, theme) => ({
+            invalidate() {},
+            render(width: number): string[] {
+              // Segments are captured per install, keeping render() free of the
+              // extension context so a stale ctx can never be touched mid-draw.
+              const line = segments
+                .map((segment) => theme.fg(USAGE_SEVERITY_COLORS[segment.severity], segment.text))
+                .join("");
+              return [truncateToWidth(line, width, theme.fg("dim", "\u2026"))];
+            },
+          }),
+          { placement: usageConfig.placement },
+        );
+      } else {
+        ctx.ui.setWidget(USAGE_WIDGET_KEY, undefined);
+        ctx.ui.setStatus(USAGE_WIDGET_KEY, sanitizeStatusText(segments.map((s) => s.text).join("")));
+      }
+      usageWidgetInstalled = true;
+    } catch {
+      // A stale extension context can surface here; the next session re-installs.
+    }
+  }
+
+  pi.registerCommand("opencode-go-usage", {
+    description: "Show, refresh, or toggle the OpenCode Go 5h / 7d / 30d usage widget",
+    handler: async (args, ctx) => {
+      const action = args.trim().toLowerCase();
+      if (action === "on" || action === "off") {
+        const enabled = action === "on";
+        usageConfig = { ...usageConfig, enabled };
+        const persisted = writeUsageConfig({ enabled });
+        const suffix = persisted ? "" : " for this session (could not write the config file)";
+        if (enabled) {
+          usageController.start(ctx);
+          ctx.ui.notify(`OpenCode Go usage widget enabled${suffix}.`, "info");
+        } else {
+          usageController.stop();
+          usageController.clear();
+          updateUsageWidget(ctx);
+          ctx.ui.notify(`OpenCode Go usage widget disabled${suffix}.`, "info");
+        }
+        return;
+      }
+      if (action === "debug") {
+        ctx.ui.notify(usageController.formatDebug(ctx), "info");
+        return;
+      }
+      // No argument (and "refresh") always re-reads the API and reports the breakdown.
+      await usageController.refresh(ctx, { notify: true, force: true });
+    },
+  });
+
   pi.on("before_provider_headers", (event, ctx) => {
     if (ctx.model?.provider !== PROVIDER_ID) return;
     applyOpenCodeSessionHeaders(event.headers, ctx.sessionManager.getSessionId());
   });
 
   pi.on("session_start", async (_event, ctx) => {
+    usageController.start(ctx);
     revalidateAbort?.abort();
     revalidateAbort = new AbortController();
     const signal = revalidateAbort.signal;
@@ -438,7 +541,16 @@ export default function (pi: ExtensionAPI) {
     });
   });
 
+  pi.on("turn_end", (_event, ctx) => {
+    void usageController.refresh(ctx);
+  });
+
+  pi.on("model_select", (_event, ctx) => {
+    void usageController.refresh(ctx);
+  });
+
   pi.on("session_shutdown", () => {
     revalidateAbort?.abort();
+    usageController.shutdown();
   });
 }

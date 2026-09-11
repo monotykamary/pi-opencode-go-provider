@@ -21,6 +21,7 @@ _Go-optimized endpoints for lower latency — 14+ models for [pi](https://github
 - **Cost Tracking** with per-model pricing for budget management
 - **Reasoning Models** with thinking level maps for proper effort control
 - **Prompt-cache session affinity** — sends `x-opencode-session` and `x-opencode-client` so OpenCode Go can pin a session to the same cache node
+- **Usage widget** — shows how much of the OpenCode Go 5h / 7d / 30d budgets you have spent, below the editor (footer status line outside the TUI)
 
 ## Installation
 
@@ -110,6 +111,48 @@ Then select "opencode-go" as the provider and choose from the available models.
 
 The default model for this provider is `kimi-k2.6` (matching pi core's built-in default); use `/model` to pick another.
 
+## Usage Widget
+
+OpenCode Go meters the plan with three dollar budgets — a rolling 5-hour window,
+a weekly window and a monthly window. The extension polls
+`GET https://opencode.ai/zen/go/v1/usage` with your API key and renders the spent
+share of each window below the editor. When no terminal UI is attached (print or
+JSON mode) the same line goes to the footer status bar instead.
+
+```
+OpenCode Go · 5h 63% used ↺2h14m · 7d 41% used ↺5d3h · 30d 12% used ↺23d0h
+```
+
+Colours track the remaining headroom — green, yellow from 70% used, red from 90%
+or when a window reports `rate-limited` — and the widget only appears while an
+`opencode-go` model is selected.
+
+```
+/opencode-go-usage            # refresh and show the full breakdown
+/opencode-go-usage refresh    # same, but always re-reads the API
+/opencode-go-usage off        # hide the widget (persisted)
+/opencode-go-usage on         # show it again
+/opencode-go-usage debug      # config, last fetch/error, endpoint
+```
+
+Polling runs every 60 seconds, plus after every turn and whenever the selected
+model changes. Settings are read from `~/.pi/agent/opencode-go-provider.json`:
+
+```json
+{
+  "usage": {
+    "enabled": true,
+    "refreshIntervalMs": 60000,
+    "showOnlyOnProvider": true,
+    "showResetTimes": true,
+    "placement": "belowEditor"
+  }
+}
+```
+
+`placement` accepts `belowEditor` (default) or `aboveEditor`. Every key is
+optional; `/opencode-go-usage on|off` writes only `enabled`.
+
 ## Authentication
 
 The opencode-go API key can be configured in multiple ways. Credentials are resolved in this order:
@@ -126,7 +169,9 @@ The opencode-go API key can be configured in multiple ways. Credentials are reso
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `OPENCODE_API_KEY` | No | Your opencode.ai API key (fallback if not in auth.json) |
+| `OPENCODE_API_KEY` | No | Your opencode.ai API key (fallback if not in auth.json). Also used for usage requests |
+| `OPENCODE_GO_USAGE` | No | Set to `off`/`false`/`0` to disable the usage widget without editing the config file |
+| `OPENCODE_GO_USAGE_INTERVAL_MS` | No | Override the usage poll interval (clamped to 15s–10m) |
 
 ## Configuration
 
