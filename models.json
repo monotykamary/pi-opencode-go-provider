@@ -240,6 +240,34 @@
     "maxTokens": 262144
   },
   {
+    "id": "deepseek-v4.1-flash",
+    "name": "DeepSeek V4.1 Flash",
+    "api": "openai-completions",
+    "baseUrl": "https://opencode.ai/zen/go/v1",
+    "reasoning": true,
+    "thinkingLevelMap": {
+      "off": null,
+      "minimal": null,
+      "low": "low",
+      "medium": null,
+      "high": "high",
+      "xhigh": null,
+      "max": "max"
+    },
+    "input": [
+      "text",
+      "image"
+    ],
+    "cost": {
+      "input": 0.15,
+      "output": 0.6,
+      "cacheRead": 0.003,
+      "cacheWrite": 0
+    },
+    "contextWindow": 1000000,
+    "maxTokens": 384000
+  },
+  {
     "id": "hy3",
     "name": "Hy3",
     "api": "openai-completions",
@@ -579,34 +607,6 @@
     },
     "contextWindow": 1000000,
     "maxTokens": 131072
-  },
-  {
-    "id": "deepseek-flash",
-    "name": "DeepSeek V4.1 Flash",
-    "api": "openai-completions",
-    "baseUrl": "https://opencode.ai/zen/go/v1",
-    "reasoning": true,
-    "thinkingLevelMap": {
-      "off": null,
-      "minimal": null,
-      "low": "low",
-      "medium": null,
-      "high": "high",
-      "xhigh": null,
-      "max": "max"
-    },
-    "input": [
-      "text",
-      "image"
-    ],
-    "cost": {
-      "input": 0.15,
-      "output": 0.6,
-      "cacheRead": 0.003,
-      "cacheWrite": 0
-    },
-    "contextWindow": 1000000,
-    "maxTokens": 384000
   },
   {
     "id": "mimo-v2.5",
