@@ -124,7 +124,7 @@ export class UsageController {
       `Last fetch: ${this.usageLastFetchAt ? new Date(this.usageLastFetchAt).toLocaleTimeString() : "never"}`,
       `Last success: ${this.usageUpdatedAt ? new Date(this.usageUpdatedAt).toLocaleTimeString() : "never"}`,
       `Last error: ${this.usageError ?? "none"}`,
-      `Windows: ${this.usageSnapshot?.windows.map((window) => `${window.label}=${window.usedPercent}%`).join(" ") ?? "none"}`,
+      `Windows: ${this.usageSnapshot?.windows.map((window) => `${window.label}=${window.remainingPercent}% left`).join(" ") ?? "none"}`,
       `Endpoint: ${USAGE_URL}`,
       `Config file: ${configPath()}`,
     ].join("\n");

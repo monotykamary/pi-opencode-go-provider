@@ -115,17 +115,23 @@ The default model for this provider is `kimi-k2.6` (matching pi core's built-in 
 
 OpenCode Go meters the plan with three dollar budgets — a rolling 5-hour window,
 a weekly window and a monthly window. The extension polls
-`GET https://opencode.ai/zen/go/v1/usage` with your API key and renders the spent
-share of each window below the editor. When no terminal UI is attached (print or
-JSON mode) the same line goes to the footer status bar instead.
+`GET https://opencode.ai/zen/go/v1/usage` with your API key and shows how much of
+each budget is **left**, below the editor. When no terminal UI is attached (print
+or JSON mode) the same line goes to the footer status bar instead.
 
 ```
-OpenCode Go · 5h 63% used ↺2h14m · 7d 41% used ↺5d3h · 30d 12% used ↺23d0h
+Usage: 5h: 63% · 7d: 41% · 30d: 12% · 5h ↺ 2h14m · 7d ↺ 3d20h · 30d ↺ 20d0h
 ```
 
-Colours track the remaining headroom — green, yellow from 70% used, red from 90%
-or when a window reports `rate-limited` — and the widget only appears while an
-`opencode-go` model is selected.
+The line matches the pi-better-openai usage line: the remaining percentages come
+first, then a countdown per window. Countdowns only — three windows with three
+wall-clock reset times run past the terminal width, and `/opencode-go-usage`
+lists the exact local reset time for each. Colours track what is left — green,
+amber at 30% or less, red at 10% or less or when a window reports
+`rate-limited` — and the widget only appears while an `opencode-go` model is
+selected. The Go API publishes no banked reset credits,
+so that trailing segment appears only if a response ever carries a
+`bankedResets` count.
 
 ```
 /opencode-go-usage            # refresh and show the full breakdown

@@ -4,6 +4,7 @@
  * `GET https://opencode.ai/zen/go/v1/usage` is the only place the Go plan's
  * three meter windows are published. Server source:
  *   sst/opencode packages/console/app/src/routes/zen/go/v1/usage.ts
+ *   sst/opencode packages/console/core/src/subscription.ts
  *
  *   Authorization: Bearer <api-key>
  *   200 { "usage": { "rolling" | "weekly" | "monthly":
@@ -11,9 +12,16 @@
  *             "resetsAt": "<ISO-8601>" } } }
  *   401 AuthError (missing/unknown key), 403 EntitlementError (no Go plan)
  *
- * `percent` is the share of that window's dollar budget already spent
- * (`floor(min(100, usage / limit * 100))`), so the widget reports it as
- * "% used". The dollar limits are not on the wire; see USAGE_LIMITS_NOTE.
+ * `percent` is the share of the window budget already spent
+ * (`floor(min(100, usage / limit * 100))`, forced to 100 once the window is rate
+ * limited), so every surface here reports `100 - percent` — the budget you have
+ * left. The dollar limits are not on the wire; see USAGE_LIMITS_NOTE.
+ *
+ * The widget line mirrors the pi-better-openai usage line so both providers read
+ * the same way:
+ *
+ *   Usage: 5h: 63% · 7d: 41% · 30d: 12% · 5h ↺ 2h14m · 7d ↺ 3d20h ·
+ *   30d ↺ 20d0h
  */
 
 export const USAGE_URL = "https://opencode.ai/zen/go/v1/usage";
@@ -30,8 +38,10 @@ export interface UsageWindow {
   /** Short human label: 5h / 7d / 30d. */
   label: string;
   status: UsageStatus;
-  /** 0-100, share of the window budget already consumed. */
+  /** 0-100, share of the window budget already consumed (raw API value). */
   usedPercent: number;
+  /** 0-100, share of the window budget still available (100 - usedPercent). */
+  remainingPercent: number;
   /** Window rollover instant in epoch milliseconds, or null when unknown. */
   resetsAt: number | null;
 }
@@ -40,6 +50,12 @@ export interface UsageSnapshot {
   capturedAt: number;
   windows: UsageWindow[];
   isLimited: boolean;
+  /**
+   * Banked reset credits. The Go API does not expose this today — its payload
+   * carries only status/percent/resetsAt per window — so the segment stays off
+   * the line until a response actually includes `bankedResets`.
+   */
+  bankedResets: number | null;
 }
 
 export interface UsageSegment {
@@ -49,6 +65,7 @@ export interface UsageSegment {
 
 export interface UsageFormatOptions {
   showResetTimes: boolean;
+  showBankedResets?: boolean;
 }
 
 export const USAGE_WINDOW_LABELS: Record<UsageWindowKey, string> = {
@@ -57,9 +74,17 @@ export const USAGE_WINDOW_LABELS: Record<UsageWindowKey, string> = {
   monthly: "30d",
 };
 
+/** Whether a window's reset needs a calendar date as well as a weekday. */
+const USAGE_WINDOW_INCLUDE_DATE: Record<UsageWindowKey, boolean> = {
+  rolling: false,
+  weekly: true,
+  monthly: true,
+};
+
 const WINDOW_KEYS: UsageWindowKey[] = ["rolling", "weekly", "monthly"];
-const WARNING_PERCENT = 70;
-const CRITICAL_PERCENT = 90;
+/** Remaining budget at or below these thresholds turns the percentage amber/red. */
+const WARNING_REMAINING_PERCENT = 30;
+const CRITICAL_REMAINING_PERCENT = 10;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -98,13 +123,20 @@ function parseWindow(key: UsageWindowKey, raw: unknown): UsageWindow | undefined
   if (percent === undefined) return undefined;
   const status: UsageStatus =
     raw.status === "rate-limited" ? "rate-limited" : raw.status === "ok" ? "ok" : "unknown";
+  const usedPercent = clampPercent(percent);
   return {
     key,
     label: USAGE_WINDOW_LABELS[key],
     status,
-    usedPercent: clampPercent(percent),
+    usedPercent,
+    remainingPercent: 100 - usedPercent,
     resetsAt: parseResetAt(raw.resetsAt),
   };
+}
+
+function parseBankedResets(usage: Record<string, unknown>): number | null {
+  const count = toFiniteNumber(usage.bankedResets);
+  return count !== undefined && Number.isInteger(count) && count >= 0 ? count : null;
 }
 
 /**
@@ -124,6 +156,7 @@ export function parseUsageSnapshot(payload: unknown, now = Date.now()): UsageSna
     capturedAt: now,
     windows,
     isLimited: windows.some((window) => window.status === "rate-limited"),
+    bankedResets: parseBankedResets(usage),
   };
 }
 
@@ -143,7 +176,7 @@ export function formatPercent(value: number): string {
   return `${Math.round(clampPercent(value))}%`;
 }
 
-/** Compact duration for a countdown: 2h14m / 5d3h / 45s / now. */
+/** Compact duration for a countdown: 2h14m / 5d3h / 45m / 12s / now. */
 export function formatCountdown(milliseconds: number): string {
   if (!Number.isFinite(milliseconds)) return "unknown";
   const total = Math.max(0, Math.round(milliseconds / 1000));
@@ -158,57 +191,120 @@ export function formatCountdown(milliseconds: number): string {
   return `${seconds}s`;
 }
 
-function clockFormat(now: number, reset: number): Intl.DateTimeFormatOptions {
-  const current = new Date(now);
-  const target = new Date(reset);
-  if (target.toDateString() === current.toDateString()) {
-    return { hour: "numeric", minute: "2-digit" };
-  }
-  if (target.getTime() - current.getTime() < 7 * 86_400_000) {
-    return { weekday: "short", hour: "numeric", minute: "2-digit" };
-  }
-  return { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" };
+interface ResetClockFormatters {
+  time: Intl.DateTimeFormat;
+  weekday: Intl.DateTimeFormat;
+  date: Intl.DateTimeFormat;
 }
 
-/** Local wall-clock time the window rolls over, e.g. "16:46" or "Mon 16:46". */
-export function formatResetClock(resetAt: number, now = Date.now()): string {
+const RESET_CLOCK_FORMATTER_LIMIT = 8;
+const resetClockFormatters = new Map<string, ResetClockFormatters>();
+
+function timeZoneId(): string {
   try {
-    return new Intl.DateTimeFormat(undefined, clockFormat(now, resetAt)).format(resetAt);
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || "local";
   } catch {
-    return new Date(resetAt).toISOString();
+    return "local";
   }
 }
 
+/** Intl formatters are expensive; cache one set per time zone and offset. */
+function resetClockFormatterFor(reset: Date): ResetClockFormatters {
+  const key = `${timeZoneId()}:${reset.getTimezoneOffset()}`;
+  let formatters = resetClockFormatters.get(key);
+  if (!formatters) {
+    formatters = {
+      time: new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" }),
+      weekday: new Intl.DateTimeFormat(undefined, { weekday: "short" }),
+      date: new Intl.DateTimeFormat(undefined, { month: "numeric", day: "numeric" }),
+    };
+    resetClockFormatters.set(key, formatters);
+    while (resetClockFormatters.size > RESET_CLOCK_FORMATTER_LIMIT) {
+      const oldest = resetClockFormatters.keys().next().value;
+      if (oldest === undefined) break;
+      resetClockFormatters.delete(oldest);
+    }
+  }
+  return formatters;
+}
+
+/**
+ * Local wall-clock instant a window rolls over: "3:14 PM" later today,
+ * "Tue 3:14 PM" within the week, or "Tue 9/15 10:42 AM" with `includeDate`.
+ */
+export function formatResetClock(
+  resetAt: number,
+  options?: { includeDate?: boolean },
+  now = Date.now(),
+): string | null {
+  const reset = new Date(resetAt);
+  if (Number.isNaN(reset.getTime())) return null;
+  const formatters = resetClockFormatterFor(reset);
+  const time = formatters.time.format(reset);
+  if (!options?.includeDate && reset.toDateString() === new Date(now).toDateString()) return time;
+  const weekday = formatters.weekday.format(reset);
+  if (!options?.includeDate) return `${weekday} ${time}`;
+  return `${weekday} ${formatters.date.format(reset)} ${time}`;
+}
+
+/**
+ * "↺ 2h14m", with the window label when several are listed. The widget carries
+ * countdowns only: three windows plus three wall-clock times run past the
+ * terminal width, so the exact reset time lives in the breakdown instead.
+ */
+function formatCompactReset(
+  label: string | undefined,
+  resetAt: number | null,
+  now: number,
+): string | null {
+  if (resetAt === null) return null;
+  return `${label ? `${label} ` : ""}↺ ${formatCountdown(resetAt - now)}`;
+}
+
+/** "3 banked resets", or null when the count is absent or zero. */
+export function formatBankedResetsSuffix(count: number | null): string | null {
+  if (count === null || !Number.isInteger(count) || count <= 0) return null;
+  return `${count} banked reset${count === 1 ? "" : "s"}`;
+}
+
+/** Remaining budget drives the colour: plenty left is green, nearly spent is red. */
 export function severityForWindow(window: UsageWindow): UsageSeverity {
-  if (window.status === "rate-limited" || window.usedPercent >= CRITICAL_PERCENT) return "critical";
-  if (window.usedPercent >= WARNING_PERCENT) return "warning";
+  if (window.status === "rate-limited" || window.remainingPercent <= CRITICAL_REMAINING_PERCENT) {
+    return "critical";
+  }
+  if (window.remainingPercent <= WARNING_REMAINING_PERCENT) return "warning";
   return "ok";
 }
 
-/** Single-line breakdown: "OpenCode Go · 5h 63% used ↺2h14m · 7d ...". */
+/**
+ * One-line widget, split into severity-tagged segments:
+ * "Usage: 5h: 63% · 7d: 41% · 30d: 12% · 5h ↺ 2h14m · 7d ↺ 3d20h · 30d ↺ …".
+ */
 export function usageSegments(
   snapshot: UsageSnapshot,
   options: UsageFormatOptions,
   now = Date.now(),
 ): UsageSegment[] {
-  const segments: UsageSegment[] = [{ text: "OpenCode Go", severity: "muted" }];
-  for (const window of snapshot.windows) {
-    segments.push({ text: " · ", severity: "muted" });
-    segments.push({ text: `${window.label} `, severity: "muted" });
-    if (window.status === "rate-limited") {
-      segments.push({ text: "LIMIT", severity: "critical" });
-    } else {
-      segments.push({
-        text: `${formatPercent(window.usedPercent)} used`,
-        severity: severityForWindow(window),
-      });
+  const windows = snapshot.windows;
+  const labelled = windows.length > 1;
+  const segments: UsageSegment[] = [{ text: "Usage: ", severity: "muted" }];
+  windows.forEach((window, index) => {
+    if (index > 0) segments.push({ text: " · ", severity: "muted" });
+    segments.push({ text: `${window.label}: `, severity: "muted" });
+    segments.push({
+      text: formatPercent(window.remainingPercent),
+      severity: severityForWindow(window),
+    });
+  });
+  if (options.showResetTimes) {
+    for (const window of windows) {
+      const reset = formatCompactReset(labelled ? window.label : undefined, window.resetsAt, now);
+      if (reset) segments.push({ text: ` · ${reset}`, severity: "muted" });
     }
-    if (options.showResetTimes && window.resetsAt !== null) {
-      segments.push({
-        text: ` ↺${formatCountdown(window.resetsAt - now)}`,
-        severity: "muted",
-      });
-    }
+  }
+  if (options.showBankedResets !== false) {
+    const banked = formatBankedResetsSuffix(snapshot.bankedResets);
+    if (banked) segments.push({ text: ` · ${banked}`, severity: "muted" });
   }
   return segments;
 }
@@ -223,21 +319,23 @@ export function formatUsageLine(
     .join("");
 }
 
-/** Progress bar: 20 cells, filled by percent. */
+/** Progress bar: 20 cells, filled by the remaining percentage. */
 export function formatBar(percent: number, width = 20): string {
   const filled = Math.round((clampPercent(percent) / 100) * width);
-  return `${"\u2588".repeat(filled)}${"\u2591".repeat(width - filled)}`;
+  return `${"█".repeat(filled)}${"░".repeat(width - filled)}`;
 }
 
 /** Multi-line breakdown with bars, used by the command output. */
 export function formatUsageDetail(snapshot: UsageSnapshot, now = Date.now()): string[] {
   return snapshot.windows.map((window) => {
-    const limited = window.status === "rate-limited";
-    const percent = limited ? 100 : window.usedPercent;
+    const clock = window.resetsAt === null
+      ? null
+      : formatResetClock(window.resetsAt, { includeDate: USAGE_WINDOW_INCLUDE_DATE[window.key] }, now);
     const reset =
-      window.resetsAt === null
+      window.resetsAt === null || clock === null
         ? ""
-        : `  ↺ ${formatCountdown(window.resetsAt - now)} (${formatResetClock(window.resetsAt, now)})`;
-    return `${window.label.padEnd(3)} ${formatBar(percent)} ${formatPercent(percent).padStart(4)} used${reset}${limited ? "  RATE LIMITED" : ""}`;
+        : `  ↺ ${formatCountdown(window.resetsAt - now)} - ${clock}`;
+    const limited = window.status === "rate-limited" ? "  RATE LIMITED" : "";
+    return `${window.label.padEnd(3)} ${formatBar(window.remainingPercent)} ${formatPercent(window.remainingPercent).padStart(4)} left${reset}${limited}`;
   });
 }
