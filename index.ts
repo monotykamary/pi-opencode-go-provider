@@ -33,6 +33,12 @@ import { USAGE_WIDGET_KEY, readUsageConfig, writeUsageConfig } from "./config.ts
 import { sanitizeStatusText, truncateToWidth } from "./format.ts";
 import { usageSegments, type UsageSegment, type UsageSeverity } from "./usage.ts";
 import { UsageController } from "./usage-controller.ts";
+import {
+  isMultiproviderService,
+  MULTIPROVIDER_SERVICE_EVENT,
+  setActiveMultiproviderService,
+  type MultiproviderService,
+} from "./multiprovider.ts";
 import modelsData from "./models.json" with { type: "json" };
 import customModelsData from "./custom-models.json" with { type: "json" };
 import patchData from "./patch.json" with { type: "json" };
@@ -421,6 +427,34 @@ export default function (pi: ExtensionAPI) {
   let usageConfig = readUsageConfig();
   let usageWidgetInstalled = false;
   const usageController = new UsageController(() => usageConfig, updateUsageWidget);
+  let usageContext: ExtensionContext | undefined;
+
+  // Follow pi-multiprovider's active pooled account. Usage is per-account, so a
+  // switch — and a resume, which replays the account the session last switched
+  // to — must repaint the widget instead of waiting for the next poll. Without
+  // pi-multiprovider nothing here activates and resolution stays unchanged.
+  let multiproviderService: MultiproviderService | undefined;
+  let unsubscribeMultiprovider: (() => void) | undefined;
+  const refreshUsageForActiveAccount = (ctx: ExtensionContext | undefined): void => {
+    if (ctx === undefined) return;
+    void usageController.refresh(ctx, { force: true });
+  };
+  if (typeof pi.events?.on === "function") {
+    pi.events.on(MULTIPROVIDER_SERVICE_EVENT, (value: unknown) => {
+      if (!isMultiproviderService(value)) return;
+      if (value !== multiproviderService) {
+        unsubscribeMultiprovider?.();
+        multiproviderService = value;
+        setActiveMultiproviderService(value);
+        unsubscribeMultiprovider = value.onActiveAccountChanged(PROVIDER_ID, (event) => {
+          refreshUsageForActiveAccount(usageContext ?? event.ctx);
+        });
+      }
+      // The event re-fires at every session start with the same stable object,
+      // so this also catches a service that appeared mid-session.
+      refreshUsageForActiveAccount(usageContext);
+    });
+  }
 
   const USAGE_SEVERITY_COLORS: Record<UsageSeverity, ThemeColor> = {
     ok: "success",
@@ -510,6 +544,7 @@ export default function (pi: ExtensionAPI) {
   });
 
   pi.on("session_start", async (_event, ctx) => {
+    usageContext = ctx;
     usageController.start(ctx);
     revalidateAbort?.abort();
     revalidateAbort = new AbortController();
@@ -551,6 +586,11 @@ export default function (pi: ExtensionAPI) {
 
   pi.on("session_shutdown", () => {
     revalidateAbort?.abort();
+    usageContext = undefined;
+    unsubscribeMultiprovider?.();
+    unsubscribeMultiprovider = undefined;
+    multiproviderService = undefined;
+    setActiveMultiproviderService(undefined);
     usageController.shutdown();
   });
 }

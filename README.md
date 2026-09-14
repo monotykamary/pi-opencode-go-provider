@@ -21,7 +21,7 @@ _Go-optimized endpoints for lower latency — 14+ models for [pi](https://github
 - **Cost Tracking** with per-model pricing for budget management
 - **Reasoning Models** with thinking level maps for proper effort control
 - **Prompt-cache session affinity** — sends `x-opencode-session` and `x-opencode-client` so OpenCode Go can pin a session to the same cache node
-- **Usage widget** — shows how much of the OpenCode Go 5h / 7d / 30d budgets you have spent, below the editor (footer status line outside the TUI)
+- **Usage widget** — shows how much of the OpenCode Go 5h / 7d / 30d budgets you have spent, below the editor (footer status line outside the TUI). Each account carries its own budgets, so when [pi-multiprovider](https://github.com/monotykamary/pi-multiprovider) 0.8.0+ pools several `opencode-go` accounts the widget bills the session's active one and repaints on every switch or resume.
 
 ## Installation
 
@@ -158,6 +158,17 @@ model changes. Settings are read from `~/.pi/agent/opencode-go-provider.json`:
 
 `placement` accepts `belowEditor` (default) or `aboveEditor`. Every key is
 optional; `/opencode-go-usage on|off` writes only `enabled`.
+
+### Pooled accounts
+
+When [pi-multiprovider](https://github.com/monotykamary/pi-multiprovider)
+0.8.0+ pools several `opencode-go` accounts, usage reads bill the session's
+active account instead of Pi's default credential: every account has its own
+5h / 7d / 30d budgets. The widget also repaints when the account changes,
+including when a resumed session restores the account last chosen with
+`/switch-account`, rather than showing the previous account until the next
+poll. Without pi-multiprovider nothing changes: the widget bills the key from
+the resolution order above.
 
 ## Authentication
 

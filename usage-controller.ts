@@ -8,6 +8,7 @@
 
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { PROVIDER_ID, configPath, type UsageConfig } from "./config.ts";
+import { getActiveMultiproviderService } from "./multiprovider.ts";
 import {
   USAGE_LIMITS_NOTE,
   USAGE_URL,
@@ -156,7 +157,27 @@ export class UsageController {
     }
   }
 
+  /**
+   * The session's active pooled account, when pi-multiprovider pools
+   * opencode-go. Every account carries its own budget, so a switched or
+   * restored account must bill itself instead of Pi's default credential.
+   */
+  private async resolvePooledApiKey(ctx: ExtensionContext): Promise<string | undefined> {
+    const service = getActiveMultiproviderService();
+    if (service === undefined) return undefined;
+    try {
+      const resolved = await service.resolveActiveAccountAuth(PROVIDER_ID, ctx);
+      const token = resolved?.accessToken.trim();
+      return token ? token : undefined;
+    } catch {
+      // A failing bridge must never block the default resolution below.
+      return undefined;
+    }
+  }
+
   private async resolveApiKey(ctx: ExtensionContext): Promise<string | undefined> {
+    const pooled = await this.resolvePooledApiKey(ctx);
+    if (pooled !== undefined) return pooled;
     let key: string | undefined;
     try {
       key = await ctx.modelRegistry.getApiKeyForProvider(PROVIDER_ID);
