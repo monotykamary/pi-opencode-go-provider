@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { DEFAULT_USAGE_CONFIG } from "../config.ts";
 import { ASCII_GLYPHS, UNICODE_GLYPHS, detectLegacyTerminal, resolveGlyphSet, resolveWidgetGlyphSet } from "../glyphs.ts";
-import { formatBar, usageSegments } from "../usage.ts";
+import { formatBar, parseUsageSnapshot, usageSegments } from "../usage.ts";
 import { truncateToWidth } from "../format.ts";
 
 const mintty = { TERM_PROGRAM: "mintty", TERM: "xterm" } as NodeJS.ProcessEnv;
@@ -43,17 +43,22 @@ test("the ASCII set is pure ASCII and renders an ASCII usage line", () => {
   assert.equal(isAscii(Object.values(ASCII_GLYPHS).join("")), true);
   assert.equal(isAscii(Object.values(UNICODE_GLYPHS).join("")), false);
 
-  const snapshot = {
-    bankedResets: null,
-    windows: [
-      { key: "rolling" as const, label: "5h", remainingPercent: 63, status: "ok" as const, resetsAt: Date.now() + 3_600_000, limitUsd: null },
-      { key: "weekly" as const, label: "7d", remainingPercent: 41, status: "ok" as const, resetsAt: Date.now() + 86_400_000, limitUsd: null },
-    ],
-  };
-  const asciiLine = usageSegments(snapshot, { showResetTimes: true, glyphs: ASCII_GLYPHS }, 0)
+  // Built through the real parser so the fixture cannot drift from the wire shape.
+  const now = Date.now();
+  const snapshot = parseUsageSnapshot(
+    {
+      usage: {
+        rolling: { status: "ok", percent: 37, resetsAt: new Date(now + 3_600_000).toISOString() },
+        weekly: { status: "ok", percent: 59, resetsAt: new Date(now + 86_400_000).toISOString() },
+      },
+    },
+    now,
+  );
+  assert.ok(snapshot);
+  const asciiLine = usageSegments(snapshot, { showResetTimes: true, glyphs: ASCII_GLYPHS }, now)
     .map((segment) => segment.text)
     .join("");
-  const unicodeLine = usageSegments(snapshot, { showResetTimes: true }, 0)
+  const unicodeLine = usageSegments(snapshot, { showResetTimes: true }, now)
     .map((segment) => segment.text)
     .join("");
   assert.equal(isAscii(asciiLine), true);
