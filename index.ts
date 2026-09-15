@@ -29,8 +29,9 @@ import {
   type ModelRegistry,
   type ThemeColor,
 } from "@earendil-works/pi-coding-agent";
-import { USAGE_WIDGET_KEY, readUsageConfig, writeUsageConfig } from "./config.ts";
+import { USAGE_WIDGET_KEY, readUsageConfig, writeUsageConfig, type UsageConfig } from "./config.ts";
 import { sanitizeStatusText, truncateToWidth } from "./format.ts";
+import { resolveGlyphSet, resolveWidgetGlyphSet, type GlyphSet } from "./glyphs.ts";
 import { usageSegments, type UsageSegment, type UsageSeverity } from "./usage.ts";
 import { UsageController } from "./usage-controller.ts";
 import {
@@ -426,6 +427,7 @@ export default function (pi: ExtensionAPI) {
 
   let usageConfig = readUsageConfig();
   let usageWidgetInstalled = false;
+  let usageClampNotified = false;
   const usageController = new UsageController(() => usageConfig, updateUsageWidget);
   let usageContext: ExtensionContext | undefined;
 
@@ -463,17 +465,25 @@ export default function (pi: ExtensionAPI) {
     muted: "dim",
   };
 
-  function usageSegmentsFor(ctx: ExtensionContext): UsageSegment[] | undefined {
+  function usageSegmentsFor(ctx: ExtensionContext, glyphs: GlyphSet): UsageSegment[] | undefined {
     const snapshot = usageController.snapshot;
     if (!snapshot || !usageConfig.enabled || !usageController.isEligible(ctx)) return undefined;
-    const segments = usageSegments(snapshot, { showResetTimes: usageConfig.showResetTimes });
-    if (usageController.isStale()) segments.push({ text: " · stale", severity: "warning" });
+    const segments = usageSegments(snapshot, { showResetTimes: usageConfig.showResetTimes, glyphs });
+    if (usageController.isStale()) segments.push({ text: ` ${glyphs.sep} stale`, severity: "warning" });
     return segments;
   }
 
   function updateUsageWidget(ctx: ExtensionContext): void {
     try {
-      const segments = usageSegmentsFor(ctx);
+      // Legacy terminals measure the footer glyphs with their own tables; widget
+      // content clamps to ASCII there, the status fallback keeps the choice.
+      const glyphs = resolveGlyphSet(usageConfig.glyphs);
+      const widgetGlyphs = resolveWidgetGlyphSet(usageConfig.glyphs);
+      if (widgetGlyphs !== glyphs && !usageClampNotified) {
+        usageClampNotified = true;
+        ctx.ui.notify("OpenCode Go: widget glyphs stay ASCII on this terminal — unicode glyphs overflow legacy mintty/Cygwin cell widths. The status line is unaffected.", "info");
+      }
+      const segments = usageSegmentsFor(ctx, widgetGlyphs);
       if (!segments) {
         if (usageWidgetInstalled) {
           ctx.ui.setWidget(USAGE_WIDGET_KEY, undefined);
@@ -494,14 +504,18 @@ export default function (pi: ExtensionAPI) {
               const line = segments
                 .map((segment) => theme.fg(USAGE_SEVERITY_COLORS[segment.severity], segment.text))
                 .join("");
-              return [truncateToWidth(line, width, theme.fg("dim", "\u2026"))];
+              // Budget width - 1: never paint the terminal’s last column (a
+              // pending wrap there desyncs pi’s renderer on legacy terminals).
+              const w = Math.max(1, width - 1);
+              return [truncateToWidth(line, w, theme.fg("dim", widgetGlyphs.ellipsis))];
             },
           }),
           { placement: usageConfig.placement },
         );
       } else {
         ctx.ui.setWidget(USAGE_WIDGET_KEY, undefined);
-        ctx.ui.setStatus(USAGE_WIDGET_KEY, sanitizeStatusText(segments.map((s) => s.text).join("")));
+        const barSegments = usageSegmentsFor(ctx, glyphs) ?? segments;
+        ctx.ui.setStatus(USAGE_WIDGET_KEY, sanitizeStatusText(barSegments.map((s) => s.text).join("")));
       }
       usageWidgetInstalled = true;
     } catch {
@@ -513,6 +527,15 @@ export default function (pi: ExtensionAPI) {
     description: "Show, refresh, or toggle the OpenCode Go 5h / 7d / 30d usage widget",
     handler: async (args, ctx) => {
       const action = args.trim().toLowerCase();
+      if (action === "glyphs auto" || action === "glyphs unicode" || action === "glyphs ascii") {
+        const glyphs = action.slice("glyphs ".length) as UsageConfig["glyphs"];
+        usageConfig = { ...usageConfig, glyphs };
+        const persisted = writeUsageConfig({ glyphs });
+        updateUsageWidget(ctx);
+        const suffix = persisted ? "" : " for this session (could not write the config file)";
+        ctx.ui.notify(`OpenCode Go footer glyphs: ${glyphs}${suffix}.`, "info");
+        return;
+      }
       if (action === "on" || action === "off") {
         const enabled = action === "on";
         usageConfig = { ...usageConfig, enabled };

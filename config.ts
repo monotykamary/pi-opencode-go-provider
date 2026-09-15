@@ -9,6 +9,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { getAgentDir } from "@earendil-works/pi-coding-agent";
+import { GLYPH_MODES, type GlyphMode } from "./glyphs.ts";
 
 export const PROVIDER_ID = "opencode-go";
 export const CONFIG_BASENAME = "opencode-go-provider.json";
@@ -26,6 +27,8 @@ export interface UsageConfig {
   showOnlyOnProvider: boolean;
   /** Include reset countdowns in the widget line. */
   showResetTimes: boolean;
+  /** Footer glyph set. "auto" degrades to ASCII on legacy terminals (mintty/Cygwin). */
+  glyphs: GlyphMode;
   placement: UsagePlacement;
 }
 
@@ -35,6 +38,7 @@ export const DEFAULT_USAGE_CONFIG: UsageConfig = {
   showOnlyOnProvider: true,
   showResetTimes: true,
   placement: "belowEditor",
+  glyphs: "auto",
 };
 
 export const MIN_USAGE_REFRESH_MS = 15_000;
@@ -89,6 +93,9 @@ export function readUsageConfig(env: NodeJS.ProcessEnv = process.env): UsageConf
   if (typeof file.showResetTimes === "boolean") config.showResetTimes = file.showResetTimes;
   if (typeof file.refreshIntervalMs === "number") {
     config.refreshIntervalMs = clampRefreshInterval(file.refreshIntervalMs);
+  }
+  if (GLYPH_MODES.includes(file.glyphs as GlyphMode)) {
+    config.glyphs = file.glyphs as GlyphMode;
   }
   if (USAGE_PLACEMENTS.includes(file.placement as UsagePlacement)) {
     config.placement = file.placement as UsagePlacement;

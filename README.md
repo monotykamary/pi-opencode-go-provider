@@ -139,6 +139,7 @@ so that trailing segment appears only if a response ever carries a
 /opencode-go-usage off        # hide the widget (persisted)
 /opencode-go-usage on         # show it again
 /opencode-go-usage debug      # config, last fetch/error, endpoint
+/opencode-go-usage glyphs auto|unicode|ascii   # footer glyph set (persisted)
 ```
 
 Polling runs every 60 seconds, plus after every turn and whenever the selected
@@ -151,13 +152,16 @@ model changes. Settings are read from `~/.pi/agent/opencode-go-provider.json`:
     "refreshIntervalMs": 60000,
     "showOnlyOnProvider": true,
     "showResetTimes": true,
-    "placement": "belowEditor"
+    "placement": "belowEditor",
+    "glyphs": "auto"
   }
 }
 ```
 
 `placement` accepts `belowEditor` (default) or `aboveEditor`. Every key is
 optional; `/opencode-go-usage on|off` writes only `enabled`.
+
+`glyphs` accepts `auto` (default), `unicode`, or `ascii`. Older mintty/Cygwin builds measure ambiguous-width codepoints (the `·` separators, the `↺` reset marker) with their own cell-width tables, which can shift the row and desync pi’s renderer. `auto` switches the widget to ASCII equivalents on those terminals and the widget never paints the terminal’s last column; an explicit `unicode` is clamped to ASCII for widget content there (the status line is not row-budgeted and keeps the choice).
 
 ### Pooled accounts
 

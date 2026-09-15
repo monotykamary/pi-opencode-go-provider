@@ -24,6 +24,8 @@
  *   30d ↺ 20d0h
  */
 
+import { UNICODE_GLYPHS, type GlyphSet } from "./glyphs.ts";
+
 export const USAGE_URL = "https://opencode.ai/zen/go/v1/usage";
 
 /** Published Go budget per window; informational only, not sent by the API. */
@@ -66,6 +68,8 @@ export interface UsageSegment {
 export interface UsageFormatOptions {
   showResetTimes: boolean;
   showBankedResets?: boolean;
+  /** Glyph set for separators and reset markers; defaults to unicode. */
+  glyphs?: GlyphSet;
 }
 
 export const USAGE_WINDOW_LABELS: Record<UsageWindowKey, string> = {
@@ -256,9 +260,10 @@ function formatCompactReset(
   label: string | undefined,
   resetAt: number | null,
   now: number,
+  glyphs: GlyphSet = UNICODE_GLYPHS,
 ): string | null {
   if (resetAt === null) return null;
-  return `${label ? `${label} ` : ""}↺ ${formatCountdown(resetAt - now)}`;
+  return `${label ? `${label} ` : ""}${glyphs.reset} ${formatCountdown(resetAt - now)}`;
 }
 
 /** "3 banked resets", or null when the count is absent or zero. */
@@ -285,11 +290,12 @@ export function usageSegments(
   options: UsageFormatOptions,
   now = Date.now(),
 ): UsageSegment[] {
+  const glyphs = options.glyphs ?? UNICODE_GLYPHS;
   const windows = snapshot.windows;
   const labelled = windows.length > 1;
   const segments: UsageSegment[] = [{ text: "Usage: ", severity: "muted" }];
   windows.forEach((window, index) => {
-    if (index > 0) segments.push({ text: " · ", severity: "muted" });
+    if (index > 0) segments.push({ text: ` ${glyphs.sep} `, severity: "muted" });
     segments.push({ text: `${window.label}: `, severity: "muted" });
     segments.push({
       text: formatPercent(window.remainingPercent),
@@ -298,13 +304,13 @@ export function usageSegments(
   });
   if (options.showResetTimes) {
     for (const window of windows) {
-      const reset = formatCompactReset(labelled ? window.label : undefined, window.resetsAt, now);
-      if (reset) segments.push({ text: ` · ${reset}`, severity: "muted" });
+      const reset = formatCompactReset(labelled ? window.label : undefined, window.resetsAt, now, glyphs);
+      if (reset) segments.push({ text: ` ${glyphs.sep} ${reset}`, severity: "muted" });
     }
   }
   if (options.showBankedResets !== false) {
     const banked = formatBankedResetsSuffix(snapshot.bankedResets);
-    if (banked) segments.push({ text: ` · ${banked}`, severity: "muted" });
+    if (banked) segments.push({ text: ` ${glyphs.sep} ${banked}`, severity: "muted" });
   }
   return segments;
 }
@@ -320,13 +326,13 @@ export function formatUsageLine(
 }
 
 /** Progress bar: 20 cells, filled by the remaining percentage. */
-export function formatBar(percent: number, width = 20): string {
+export function formatBar(percent: number, width = 20, glyphs: GlyphSet = UNICODE_GLYPHS): string {
   const filled = Math.round((clampPercent(percent) / 100) * width);
-  return `${"█".repeat(filled)}${"░".repeat(width - filled)}`;
+  return `${glyphs.barFilled.repeat(filled)}${glyphs.barHollow.repeat(width - filled)}`;
 }
 
 /** Multi-line breakdown with bars, used by the command output. */
-export function formatUsageDetail(snapshot: UsageSnapshot, now = Date.now()): string[] {
+export function formatUsageDetail(snapshot: UsageSnapshot, now = Date.now(), glyphs: GlyphSet = UNICODE_GLYPHS): string[] {
   return snapshot.windows.map((window) => {
     const clock = window.resetsAt === null
       ? null
@@ -334,8 +340,8 @@ export function formatUsageDetail(snapshot: UsageSnapshot, now = Date.now()): st
     const reset =
       window.resetsAt === null || clock === null
         ? ""
-        : `  ↺ ${formatCountdown(window.resetsAt - now)} - ${clock}`;
+        : `  ${glyphs.reset} ${formatCountdown(window.resetsAt - now)} - ${clock}`;
     const limited = window.status === "rate-limited" ? "  RATE LIMITED" : "";
-    return `${window.label.padEnd(3)} ${formatBar(window.remainingPercent)} ${formatPercent(window.remainingPercent).padStart(4)} left${reset}${limited}`;
+    return `${window.label.padEnd(3)} ${formatBar(window.remainingPercent, 20, glyphs)} ${formatPercent(window.remainingPercent).padStart(4)} left${reset}${limited}`;
   });
 }
