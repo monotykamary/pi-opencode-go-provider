@@ -434,6 +434,25 @@
     "maxTokens": 131072
   },
   {
+    "id": "union-alpha",
+    "name": "Union Alpha Free",
+    "api": "anthropic-messages",
+    "baseUrl": "https://opencode.ai/zen/go",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "cost": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0
+    },
+    "contextWindow": 262144,
+    "maxTokens": 131072
+  },
+  {
     "id": "qwen3.8-flash",
     "name": "Qwen3.8 Flash",
     "api": "anthropic-messages",
