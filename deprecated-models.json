@@ -56,5 +56,25 @@
     "contextWindow": 1000000,
     "maxTokens": 384000,
     "deprecatedAt": "2026-09-11T02:00:25.277Z"
+  },
+  "union-alpha": {
+    "id": "union-alpha",
+    "name": "Union Alpha Free",
+    "api": "anthropic-messages",
+    "baseUrl": "https://opencode.ai/zen/go",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "cost": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0
+    },
+    "contextWindow": 262144,
+    "maxTokens": 131072,
+    "deprecatedAt": "2026-09-18T00:00:21.699Z"
   }
 }
