@@ -123,7 +123,7 @@
       "input": 0.3,
       "output": 1.2,
       "cacheRead": 0.06,
-      "cacheWrite": 0
+      "cacheWrite": 0.375
     },
     "contextWindow": 204800,
     "maxTokens": 131072
