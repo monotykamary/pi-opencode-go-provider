@@ -111,6 +111,25 @@
     "maxTokens": 131072
   },
   {
+    "id": "mimo-v2.6-pro",
+    "name": "MiMo-V2.6-Pro",
+    "api": "openai-completions",
+    "baseUrl": "https://opencode.ai/zen/go/v1",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "cost": {
+      "input": 0.435,
+      "output": 0.87,
+      "cacheRead": 0.003625,
+      "cacheWrite": 0
+    },
+    "contextWindow": 1048576,
+    "maxTokens": 131072
+  },
+  {
     "id": "minimax-m2.7",
     "name": "MiniMax-M2.7",
     "api": "anthropic-messages",
@@ -462,6 +481,25 @@
     "maxTokens": 131072
   },
   {
+    "id": "mimo-v2.6-flash",
+    "name": "MiMo-V2.6-Flash",
+    "api": "openai-completions",
+    "baseUrl": "https://opencode.ai/zen/go/v1",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "cost": {
+      "input": 0.14,
+      "output": 0.28,
+      "cacheRead": 0.0028,
+      "cacheWrite": 0
+    },
+    "contextWindow": 1048576,
+    "maxTokens": 131072
+  },
+  {
     "id": "grok-4.6",
     "name": "Grok 4.6",
     "api": "openai-completions",
@@ -607,6 +645,34 @@
     },
     "contextWindow": 1000000,
     "maxTokens": 131072
+  },
+  {
+    "id": "grok-4.7",
+    "name": "Grok 4.7",
+    "api": "openai-completions",
+    "baseUrl": "https://opencode.ai/zen/go/v1",
+    "reasoning": true,
+    "thinkingLevelMap": {
+      "off": null,
+      "minimal": null,
+      "low": "low",
+      "medium": "medium",
+      "high": "high",
+      "xhigh": "xhigh",
+      "max": null
+    },
+    "input": [
+      "text",
+      "image"
+    ],
+    "cost": {
+      "input": 2,
+      "output": 6,
+      "cacheRead": 0.5,
+      "cacheWrite": 0
+    },
+    "contextWindow": 500000,
+    "maxTokens": 500000
   },
   {
     "id": "mimo-v2.5",

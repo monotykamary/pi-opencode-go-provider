@@ -80,6 +80,7 @@ pi
 | GLM-5.3-Flash | Completions | Text + Image | 1.0M | 131K | $0.15 | $0.50 |
 | GPT-5.6 Luna | Responses | Text + Image | 1.1M | 128K | $0.20 | $1.20 |
 | Grok 4.6 | Completions | Text + Image | 500K | 500K | $2.00 | $6.00 |
+| Grok 4.7 | Completions | Text + Image | 500K | 500K | $2.00 | $6.00 |
 | Hy3 | Completions | Text | 256K | 128K | $0.14 | $0.58 |
 | Hy4 preview | Completions | Text | 1.0M | 64K | $0.83 | $2.50 |
 | Kimi K2.6 | Completions | Text + Image | 262K | 66K | $0.95 | $4.00 |
@@ -88,6 +89,8 @@ pi
 | LongCat-2.0 | Completions | Text | 1.0M | 131K | $0.30 | $1.20 |
 | MiMo V2.5 | Completions | Text + Image | 1.0M | 128K | $0.14 | $0.28 |
 | MiMo V2.5 Pro | Completions | Text | 1.0M | 128K | $0.43 | $0.87 |
+| MiMo-V2.6-Flash | Completions | Text + Image | 1.0M | 131K | $0.14 | $0.28 |
+| MiMo-V2.6-Pro | Completions | Text + Image | 1.0M | 131K | $0.43 | $0.87 |
 | MiniMax-M2.7 | Completions | Text | 205K | 131K | $0.30 | $1.20 |
 | MiniMax-M3 | Anthropic | Text + Image | 1.0M | 131K | $0.30 | $1.20 |
 | Muse Spark 1.2 Contributor | Responses | Text + Image | 1.0M | 131K | $0.10 | $0.20 |
