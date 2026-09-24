@@ -79,6 +79,7 @@ pi
 | GLM-5.3 | Completions | Text | 1.0M | 131K | $1.40 | $4.40 |
 | GLM-5.3-Flash | Completions | Text + Image | 1.0M | 131K | $0.15 | $0.50 |
 | GPT-5.6 Luna | Responses | Text + Image | 1.1M | 128K | $0.20 | $1.20 |
+| GPT-6 Luna | Completions | Text + Image | 1.1M | 128K | $0.10 | $0.50 |
 | Grok 4.6 | Completions | Text + Image | 500K | 500K | $2.00 | $6.00 |
 | Grok 4.7 | Completions | Text + Image | 500K | 500K | $2.00 | $6.00 |
 | Hy3 | Completions | Text | 256K | 128K | $0.14 | $0.58 |
@@ -100,6 +101,7 @@ pi
 | Qwen3.7 Plus | Completions | Text + Image | 1.0M | 66K | $0.40 | $1.60 |
 | Qwen3.8 Flash | Anthropic | Text + Image | 1.0M | 131K | $0.15 | $0.47 |
 | Qwen3.8 Max | Completions | Text + Image | 1.0M | 131K | $2.00 | $6.00 |
+| Space Bunny Free | Completions | Text + Image | 1.0M | 524K | — | — |
 *Costs are per million tokens. Prices subject to change - check [opencode.ai](https://opencode.ai) for current pricing.*
 
 ## Usage
