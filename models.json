@@ -84,6 +84,25 @@
     "maxTokens": 500000
   },
   {
+    "id": "longcat-2.5-preview-free",
+    "name": "LongCat 2.5 Preview Free",
+    "api": "openai-completions",
+    "baseUrl": "https://opencode.ai/zen/go/v1",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "cost": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0
+    },
+    "contextWindow": 1000000,
+    "maxTokens": 131072
+  },
+  {
     "id": "glm-5.3-flash",
     "name": "GLM-5.3-Flash",
     "api": "openai-completions",
