@@ -1,16 +1,17 @@
 {
   "name": "pi-opencode-go-provider",
-  "version": "1.1.13",
+  "version": "1.1.14",
   "description": "Opencode Go provider extension for pi - Fast, efficient GLM, Kimi, and MiniMax models through the opencode.ai API",
   "type": "module",
   "main": "index.ts",
   "scripts": {
     "clean": "echo 'nothing to clean'",
     "build": "echo 'nothing to build'",
-    "check": "npm run typecheck && npm run test",
+    "check": "npm run typecheck && npm run test && node scripts/test-pi-compat.mjs",
     "update-models": "node scripts/update-models.js",
     "test": "node --test",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:pi": "node scripts/test-pi-compat.mjs"
   },
   "keywords": [
     "pi",
@@ -32,8 +33,11 @@
     ]
   },
   "devDependencies": {
-    "@earendil-works/pi-coding-agent": "0.87.0",
+    "@earendil-works/pi-coding-agent": "0.99.0",
     "@types/node": "~22.19.0",
     "typescript": "^6.0.3"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*"
   }
 }
