@@ -1,24 +1,4 @@
 {
-  "union-alpha": {
-    "id": "union-alpha",
-    "name": "Union Alpha Free",
-    "api": "anthropic-messages",
-    "baseUrl": "https://opencode.ai/zen/go",
-    "reasoning": true,
-    "input": [
-      "text",
-      "image"
-    ],
-    "cost": {
-      "input": 0,
-      "output": 0,
-      "cacheRead": 0,
-      "cacheWrite": 0
-    },
-    "contextWindow": 262144,
-    "maxTokens": 131072,
-    "deprecatedAt": "2026-09-18T00:00:21.699Z"
-  },
   "qwen3.7-max": {
     "id": "qwen3.7-max",
     "name": "Qwen3.7 Max",
