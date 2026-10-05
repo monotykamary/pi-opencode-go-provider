@@ -100,9 +100,9 @@ pi
 | MiniMax-M3 | Anthropic | Text + Image | 1.0M | 131K | $0.30 | $1.20 |
 | Muse Spark 1.2 Contributor | Responses | Text + Image | 1.0M | 131K | $0.10 | $0.20 |
 | Muse Spark 1.3 Contributor | Responses | Text + Image | 1.0M | 131K | $0.10 | $0.20 |
-| Qwen3.7 Plus | Completions | Text + Image | 1.0M | 66K | $0.40 | $1.60 |
+| Qwen3.7 Plus | Anthropic | Text + Image | 1.0M | 66K | $0.40 | $1.60 |
 | Qwen3.8 Flash | Anthropic | Text + Image | 1.0M | 131K | $0.15 | $0.47 |
-| Qwen3.8 Max | Completions | Text + Image | 1.0M | 131K | $2.00 | $6.00 |
+| Qwen3.8 Max | Anthropic | Text + Image | 1.0M | 131K | $2.00 | $6.00 |
 | Space Bunny Free | Completions | Text + Image | 1.0M | 524K | — | — |
 *Costs are per million tokens. Prices subject to change - check [opencode.ai](https://opencode.ai) for current pricing.*
 

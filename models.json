@@ -115,8 +115,8 @@
   {
     "id": "qwen3.8-max",
     "name": "Qwen3.8 Max",
-    "api": "openai-completions",
-    "baseUrl": "https://opencode.ai/zen/go/v1",
+    "api": "anthropic-messages",
+    "baseUrl": "https://opencode.ai/zen/go",
     "reasoning": true,
     "thinkingLevelMap": {
       "off": null,
@@ -669,8 +669,8 @@
   {
     "id": "qwen3.7-plus",
     "name": "Qwen3.7 Plus",
-    "api": "openai-completions",
-    "baseUrl": "https://opencode.ai/zen/go/v1",
+    "api": "anthropic-messages",
+    "baseUrl": "https://opencode.ai/zen/go",
     "reasoning": true,
     "input": [
       "text",
