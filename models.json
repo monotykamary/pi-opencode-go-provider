@@ -243,26 +243,8 @@
     "maxTokens": 131072
   },
   {
-    "id": "minimax-m2.7",
-    "name": "MiniMax-M2.7",
-    "api": "anthropic-messages",
-    "baseUrl": "https://opencode.ai/zen/go",
-    "reasoning": true,
-    "input": [
-      "text"
-    ],
-    "cost": {
-      "input": 0.3,
-      "output": 1.2,
-      "cacheRead": 0.06,
-      "cacheWrite": 0.375
-    },
-    "contextWindow": 204800,
-    "maxTokens": 131072
-  },
-  {
-    "id": "space-bunny-free",
-    "name": "Space Bunny Free",
+    "id": "space-bunny",
+    "name": "Space Bunny",
     "api": "openai-completions",
     "baseUrl": "https://opencode.ai/zen/go/v1",
     "reasoning": true,
@@ -280,13 +262,31 @@
       "image"
     ],
     "cost": {
-      "input": 0,
-      "output": 0,
-      "cacheRead": 0,
+      "input": 0.15,
+      "output": 0.6,
+      "cacheRead": 0.03,
       "cacheWrite": 0
     },
     "contextWindow": 1048576,
     "maxTokens": 524288
+  },
+  {
+    "id": "minimax-m2.7",
+    "name": "MiniMax-M2.7",
+    "api": "anthropic-messages",
+    "baseUrl": "https://opencode.ai/zen/go",
+    "reasoning": true,
+    "input": [
+      "text"
+    ],
+    "cost": {
+      "input": 0.3,
+      "output": 1.2,
+      "cacheRead": 0.06,
+      "cacheWrite": 0.375
+    },
+    "contextWindow": 204800,
+    "maxTokens": 131072
   },
   {
     "id": "mimo-v2.5-pro",

@@ -103,7 +103,7 @@ pi
 | Qwen3.7 Plus | Anthropic | Text + Image | 1.0M | 66K | $0.40 | $1.60 |
 | Qwen3.8 Flash | Anthropic | Text + Image | 1.0M | 131K | $0.15 | $0.47 |
 | Qwen3.8 Max | Anthropic | Text + Image | 1.0M | 131K | $2.00 | $6.00 |
-| Space Bunny Free | Completions | Text + Image | 1.0M | 524K | — | — |
+| Space Bunny | Completions | Text + Image | 1.0M | 524K | $0.15 | $0.60 |
 *Costs are per million tokens. Prices subject to change - check [opencode.ai](https://opencode.ai) for current pricing.*
 
 ## Usage
