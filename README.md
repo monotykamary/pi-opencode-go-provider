@@ -75,6 +75,7 @@ pi
 
 | Model | API | Type | Context | Max Tokens | Input Cost | Output Cost |
 |-------|-----|------|---------|------------|------------|-------------|
+| Claude Haiku 5.5 | Anthropic | Text + Image | 1.0M | 128K | $0.10 | $0.50 |
 | DeepSeek V4 Flash | Completions | Text | 1.0M | 384K | $0.15 | $0.60 |
 | DeepSeek V4 Flash Vision Exp | Completions | Text + Image | 1.0M | 384K | $0.15 | $0.60 |
 | DeepSeek V4 Pro (New) | Completions | Text | 1.0M | 384K | $0.66 | $1.98 |
