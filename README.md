@@ -84,9 +84,9 @@ pi
 | GLM-5.3 | Completions | Text | 1.0M | 131K | $1.40 | $4.40 |
 | GLM-5.3-Flash | Completions | Text + Image | 1.0M | 131K | $0.15 | $0.50 |
 | GPT-5.6 Luna | Responses | Text + Image | 1.1M | 128K | $0.20 | $1.20 |
-| GPT-6 Luna | Completions | Text + Image | 1.1M | 128K | $0.10 | $0.50 |
-| Grok 4.6 | Completions | Text + Image | 500K | 500K | $2.00 | $6.00 |
-| Grok 4.7 | Completions | Text + Image | 500K | 500K | $2.00 | $6.00 |
+| GPT-6 Luna | Responses | Text + Image | 1.1M | 128K | $0.10 | $0.50 |
+| Grok 4.6 | Responses | Text + Image | 500K | 500K | $2.00 | $6.00 |
+| Grok 4.7 | Responses | Text + Image | 500K | 500K | $2.00 | $6.00 |
 | Hy3 | Completions | Text | 256K | 128K | $0.14 | $0.58 |
 | Hy4 preview | Completions | Text | 1.0M | 64K | $0.83 | $2.50 |
 | Kimi K2.7 Code | Completions | Text + Image | 262K | 262K | $0.95 | $4.00 |
