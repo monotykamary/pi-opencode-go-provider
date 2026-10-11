@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": [],
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "noUncheckedIndexedAccess": false
+  },
+  "include": ["tests/sync-policy.test.ts", "tests/quiet-startup-sync.test.ts", "tests/usage-sync.test.ts"]
+}

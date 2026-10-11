@@ -26,6 +26,7 @@ Run `bun run test:pi` for offline manifest, catalog, lifecycle and streaming che
 - **Cost Tracking** with per-model pricing for budget management
 - **Reasoning Models** with thinking level maps for proper effort control
 - **Prompt-cache session affinity** — sends `x-opencode-session` and `x-opencode-client` so OpenCode Go can pin a session to the same cache node
+- **Quiet live model sync** — Models refresh from the OpenCode Go API in the background, at most hourly and by one pi process at a time ([details](#model-sync))
 - **Usage widget** — shows how much of the OpenCode Go 5h / 7d / 30d budgets you have spent, below the editor (footer status line outside the TUI). Each account carries its own budgets, so when [pi-multiprovider](https://github.com/monotykamary/pi-multiprovider) 0.8.0+ pools several `opencode-go` accounts the widget bills the session's active one and repaints on every switch or resume.
 
 ## Installation
@@ -125,8 +126,13 @@ The default model for this provider is `kimi-k2.6` (matching pi core's built-in 
 OpenCode Go meters the plan with three dollar budgets — a rolling 5-hour window,
 a weekly window and a monthly window. The extension polls
 `GET https://opencode.ai/zen/go/v1/usage` with your API key and shows how much of
-each budget is **left**, below the editor. When no terminal UI is attached (print
-or JSON mode) the same line goes to the footer status bar instead.
+each budget is **left**, below the editor. Outside the TUI (e.g. RPC mode) the
+same line goes to the footer status bar instead. Sessions without a UI at all
+(print/JSON mode, fan-out child agents) never poll, and neither does a session
+without an API key. Background polls are shared across pi processes: one process
+polls at most every 30 seconds and writes the snapshot to
+`~/.pi/agent/cache/opencode-go-usage.json` (key fingerprint only, never the key),
+and the others render that file. `/opencode-go-usage` always re-reads the API.
 
 ```
 Usage: 5h: 63% · 7d: 41% · 30d: 12% · 5h ↺ 2h14m · 7d ↺ 3d20h · 30d ↺ 20d0h
@@ -202,6 +208,7 @@ The opencode-go API key can be configured in multiple ways. Credentials are reso
 | `OPENCODE_API_KEY` | No | Your opencode.ai API key (fallback if not in auth.json). Also used for usage requests |
 | `OPENCODE_GO_USAGE` | No | Set to `off`/`false`/`0` to disable the usage widget without editing the config file |
 | `OPENCODE_GO_USAGE_INTERVAL_MS` | No | Override the usage poll interval (clamped to 15s–10m) |
+| `PI_PROVIDER_SYNC_TTL_MS` | No | Model sync freshness window in ms (default `3600000`; `0` = revalidate every session start) |
 
 ## Configuration
 
@@ -214,6 +221,21 @@ Add to your pi configuration for automatic loading:
   ]
 }
 ```
+
+## Model sync
+
+Startup never waits on the network. pi starts with the cached catalog (`~/.pi/agent/cache/opencode-go-models.json`,
+falling back to the bundled `models.json`) and revalidates against `/v1/models` in the background — only when:
+
+- an OpenCode Go API key is configured (no key, no request),
+- the cache is older than 1 hour, missing, or was fetched with a different API key, and
+- no other pi process is already refreshing it (an `opencode-go-models.lock` file next to the cache).
+
+So `/new`, `/reload`, `pi -p` and fan-out child agents share one cache instead of each calling the API; a
+session that skips the fetch still picks up a cache another process refreshed. A failed refresh is retried after
+5 minutes at the earliest. `PI_PROVIDER_SYNC_TTL_MS` changes the window (`0` revalidates on every session start).
+Only a hash fingerprint of the key is stored (`opencode-go-models.sync.json`), never the key itself. The usage
+widget shares its polls the same way (see [Usage Widget](#usage-widget)).
 
 ## License
 

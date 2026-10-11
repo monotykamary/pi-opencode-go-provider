@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
-import { test } from "node:test";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { afterEach, beforeEach, test } from "node:test";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { DEFAULT_USAGE_CONFIG, PROVIDER_ID } from "../config.ts";
 import {
@@ -9,6 +12,21 @@ import {
   type MultiproviderService,
 } from "../multiprovider.ts";
 import { UsageController } from "../usage-controller.ts";
+
+// Usage polls share a snapshot under <agentDir>/cache (quiet startup sync):
+// give every test its own empty agent dir so each one polls, and never touch ~/.pi.
+let agentDir: string;
+let previousAgentDir: string | undefined;
+beforeEach(() => {
+  previousAgentDir = process.env.PI_CODING_AGENT_DIR;
+  agentDir = fs.mkdtempSync(path.join(os.tmpdir(), "pi-opencode-go-multiprovider-"));
+  process.env.PI_CODING_AGENT_DIR = agentDir;
+});
+afterEach(() => {
+  if (previousAgentDir === undefined) delete process.env.PI_CODING_AGENT_DIR;
+  else process.env.PI_CODING_AGENT_DIR = previousAgentDir;
+  fs.rmSync(agentDir, { recursive: true, force: true });
+});
 
 function fakeService(
   resolve: () => Promise<MultiproviderAccountAuth | undefined>,

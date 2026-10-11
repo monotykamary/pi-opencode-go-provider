@@ -52,6 +52,15 @@ export function configPath(): string {
   return path.join(getAgentDir(), CONFIG_BASENAME);
 }
 
+/**
+ * Shared usage snapshot written by whichever pi process last polled
+ * /zen/go/v1/usage, so other processes render it from disk instead of polling.
+ * Resolved per call: the agent dir can change between sessions (and tests).
+ */
+export function usageCachePath(): string {
+  return path.join(getAgentDir(), "cache", `${PROVIDER_ID}-usage.json`);
+}
+
 export function clampRefreshInterval(milliseconds: number): number {
   if (!Number.isFinite(milliseconds)) return DEFAULT_USAGE_CONFIG.refreshIntervalMs;
   return Math.max(MIN_USAGE_REFRESH_MS, Math.min(MAX_USAGE_REFRESH_MS, Math.round(milliseconds)));

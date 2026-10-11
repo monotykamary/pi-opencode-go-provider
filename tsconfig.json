@@ -18,5 +18,8 @@
     "types": ["node"],
     "verbatimModuleSyntax": true
   },
-  "include": ["index.ts", "*.ts", "tests/**/*.ts"]
+  "include": ["index.ts", "*.ts", "tests/**/*.ts"],
+  // Vitest suites (shared verbatim across pi-*-provider repos, extensionless
+  // imports) are typechecked by tsconfig.vitest.json with bundler resolution.
+  "exclude": ["tests/sync-policy.test.ts", "tests/quiet-startup-sync.test.ts", "tests/usage-sync.test.ts"]
 }

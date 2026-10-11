@@ -4,10 +4,20 @@
  * Mirrors the pi-better-openai usage controller: one snapshot per session,
  * polled on a timer plus after each turn, pushed into the extension widget
  * (favoured) or the footer status line when no terminal UI is available.
+ *
+ * Quiet startup sync: polling is skipped entirely without a UI (print/JSON mode,
+ * fan-out child agents) and without credentials. Background polls (session
+ * start, timer, turn/model events) are deduped across pi processes through
+ * sync-policy.ts: one process polls per USAGE_SYNC_TTL_MS and writes the
+ * snapshot to `<agentDir>/cache/opencode-go-usage.json`; the others render that
+ * file. `/opencode-go-usage` (notify) always polls.
  */
 
+import fs from "node:fs";
+import path from "node:path";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { PROVIDER_ID, configPath, type UsageConfig } from "./config.ts";
+import { PROVIDER_ID, configPath, usageCachePath, type UsageConfig } from "./config.ts";
+import { acquireModelSync, keyFingerprint, writeFileAtomic, type SkipReason } from "./sync-policy.ts";
 import { getActiveMultiproviderService } from "./multiprovider.ts";
 import {
   USAGE_LIMITS_NOTE,
@@ -20,6 +30,43 @@ import {
 } from "./usage.ts";
 
 const REQUEST_TIMEOUT_MS = 10_000;
+/**
+ * Cross-process freshness window for the shared usage snapshot: half the
+ * default 60s poll interval. Each process's widget is at most ~30s behind a
+ * direct poll, while any number of pi processes collapse to about one usage
+ * request per 30s. Fixed (PI_PROVIDER_SYNC_TTL_MS tunes the model catalog only).
+ */
+export const USAGE_SYNC_TTL_MS = 30_000;
+
+/** On-disk shape of the shared usage snapshot (never contains the key). */
+interface SharedUsage {
+  version: 1;
+  keyFingerprint: string;
+  fetchedAt: number;
+  snapshot: UsageSnapshot;
+}
+
+/** The shared snapshot, only when it was polled with this same key. */
+function readSharedUsage(cachePath: string, apiKey: string): SharedUsage | undefined {
+  try {
+    const data = JSON.parse(fs.readFileSync(cachePath, "utf8")) as Partial<SharedUsage> | null;
+    if (!data || data.keyFingerprint !== keyFingerprint(apiKey)) return undefined;
+    if (typeof data.fetchedAt !== "number" || !Array.isArray(data.snapshot?.windows)) return undefined;
+    return data as SharedUsage;
+  } catch {
+    return undefined;
+  }
+}
+
+function writeSharedUsage(cachePath: string, apiKey: string, snapshot: UsageSnapshot, fetchedAt: number): void {
+  try {
+    fs.mkdirSync(path.dirname(cachePath), { recursive: true });
+    const shared: SharedUsage = { version: 1, keyFingerprint: keyFingerprint(apiKey), fetchedAt, snapshot };
+    writeFileAtomic(cachePath, JSON.stringify(shared) + "\n");
+  } catch {
+    // Non-fatal: other processes just poll themselves.
+  }
+}
 const STALE_CONTEXT_MESSAGE = "This extension ctx is stale";
 const MISSING_KEY_MESSAGE =
   "no opencode-go API key. Set OPENCODE_API_KEY or add \"opencode-go\" to ~/.pi/agent/auth.json.";
@@ -42,6 +89,7 @@ export class UsageController {
   private usageUpdatedAt: number | undefined;
   private usageError: string | undefined;
   private usageLastFetchAt: number | undefined;
+  private usageSource: "network" | "shared cache" | undefined;
   private usageTimer: ReturnType<typeof setInterval> | undefined;
   private usageRefreshInFlight = false;
   private queuedRefresh: QueuedRefresh | undefined;
@@ -125,6 +173,8 @@ export class UsageController {
       `Last fetch: ${this.usageLastFetchAt ? new Date(this.usageLastFetchAt).toLocaleTimeString() : "never"}`,
       `Last success: ${this.usageUpdatedAt ? new Date(this.usageUpdatedAt).toLocaleTimeString() : "never"}`,
       `Last error: ${this.usageError ?? "none"}`,
+      `Last source: ${this.usageSource ?? "none"}`,
+      `Shared snapshot: ${usageCachePath()} (fresh for ${USAGE_SYNC_TTL_MS / 1000}s)`,
       `Windows: ${this.usageSnapshot?.windows.map((window) => `${window.label}=${window.remainingPercent}% left`).join(" ") ?? "none"}`,
       `Endpoint: ${USAGE_URL}`,
       `Config file: ${configPath()}`,
@@ -189,6 +239,15 @@ export class UsageController {
     return envKey ? envKey : undefined;
   }
 
+  /**
+   * Whether this context can render usage at all. Print/JSON mode and child
+   * agents run without a UI, so polling there would only spend requests.
+   * Throws the stale-context error like any other ctx access.
+   */
+  private hasUI(ctx: ExtensionContext): boolean {
+    return ctx.hasUI !== false;
+  }
+
   private fail(ctx: ExtensionContext, message: string, options?: UsageRefreshOptions): void {
     this.usageError = message;
     this.onUpdate(ctx);
@@ -201,6 +260,16 @@ export class UsageController {
     generation = this.generation,
   ): Promise<void> {
     if (!this.isCurrent(generation)) return;
+
+    // Background polls never run without a UI; an explicit command (notify) still does.
+    if (!options?.notify) {
+      try {
+        if (!this.hasUI(ctx)) return;
+      } catch (error) {
+        if (isStaleContextError(error)) this.deactivate(generation);
+        return;
+      }
+    }
 
     const config = this.getConfig();
     if (!config.enabled) {
@@ -248,6 +317,8 @@ export class UsageController {
     }
 
     this.usageRefreshInFlight = true;
+    let lease: ReturnType<typeof acquireModelSync> = null;
+    let outcome: "fetched" | "failed" | "aborted" = "failed";
     try {
       const apiKey = await this.resolveApiKey(ctx);
       if (!this.isCurrent(generation)) return;
@@ -259,6 +330,33 @@ export class UsageController {
       }
 
       this.usageLastFetchAt = Date.now();
+
+      // Cross-process dedupe: one process polls per USAGE_SYNC_TTL_MS, the rest
+      // render its snapshot. An explicit refresh (notify) bypasses the window and
+      // polls even while another process holds the lock. If the cache dir is
+      // unusable we fail open to polling (still throttled per process).
+      const cachePath = usageCachePath();
+      let skipReason: SkipReason | undefined;
+      lease = acquireModelSync({
+        cachePath,
+        apiKey,
+        force: options?.notify === true,
+        ttlMs: USAGE_SYNC_TTL_MS,
+        isValidCache: (d) => d != null,
+        onSkip: (reason) => { skipReason = reason; },
+      });
+      if (!lease && !options?.notify && skipReason !== "unwritable") {
+        const shared = readSharedUsage(cachePath, apiKey);
+        if (shared) {
+          this.usageSnapshot = shared.snapshot;
+          this.usageUpdatedAt = shared.fetchedAt;
+          this.usageError = undefined;
+          this.usageSource = "shared cache";
+        }
+        this.onUpdate(ctx);
+        return;
+      }
+
       this.usageAbortController = new AbortController();
       const response = await fetch(USAGE_URL, {
         headers: { accept: "application/json", authorization: `Bearer ${apiKey}` },
@@ -286,6 +384,9 @@ export class UsageController {
       this.usageSnapshot = snapshot;
       this.usageUpdatedAt = Date.now();
       this.usageError = undefined;
+      this.usageSource = "network";
+      if (lease) writeSharedUsage(cachePath, apiKey, snapshot, this.usageUpdatedAt);
+      outcome = "fetched";
       this.onUpdate(ctx);
       if (options?.notify) this.notify(ctx, this.formatStatus(ctx), "info");
     } catch (error) {
@@ -297,6 +398,8 @@ export class UsageController {
       const message = error instanceof Error ? error.message : String(error);
       this.fail(ctx, message, options);
     } finally {
+      if (outcome !== "fetched" && !this.isCurrent(generation)) outcome = "aborted";
+      lease?.release(outcome);
       this.usageAbortController = undefined;
       this.usageRefreshInFlight = false;
       const next = this.queuedRefresh;
@@ -320,6 +423,11 @@ export class UsageController {
     this.shuttingDown = false;
 
     if (!this.getConfig().enabled) return;
+    try {
+      if (!this.hasUI(ctx)) return; // nothing to render: no startup poll, no timer
+    } catch {
+      return;
+    }
     void this.refresh(ctx, { force: true }, generation);
     this.usageTimer = setInterval(() => {
       if (!this.isCurrent(generation)) return;
