@@ -43,5 +43,9 @@
   },
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/monotykamary/pi-opencode-go-provider.git"
   }
 }
