@@ -22,6 +22,10 @@ const PROVIDER_ID = 'opencode-go';
 // Map models.dev provider.npm to pi API type and base URL
 const NPM_TO_API = {
   '@ai-sdk/anthropic': { api: 'anthropic-messages', baseUrl: 'https://opencode.ai/zen/go' },
+  // The Go endpoint serves @ai-sdk/openai models over the OpenAI Responses protocol
+  // only: chat/completions answers 400 ModelProtocolUnsupported for them. models.dev
+  // declares the protocol per model through provider.npm.
+  '@ai-sdk/openai': { api: 'openai-responses', baseUrl: 'https://opencode.ai/zen/go/v1' },
 };
 const DEFAULT_API = { api: 'openai-completions', baseUrl: 'https://opencode.ai/zen/go/v1' };
 

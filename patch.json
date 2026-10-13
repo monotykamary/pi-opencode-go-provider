@@ -211,6 +211,26 @@
       "sessionAffinityFormat": "openai-nosession"
     }
   },
+  "gpt-6-luna": {
+    "api": "openai-responses",
+    "compat": {
+      "sessionAffinityFormat": "openai-nosession",
+      "supportsMidConvoSystemMessages": true,
+      "supportsAdditionalTools": true
+    }
+  },
+  "grok-4.6": {
+    "api": "openai-responses",
+    "compat": {
+      "sessionAffinityFormat": "openai-nosession"
+    }
+  },
+  "grok-4.7": {
+    "api": "openai-responses",
+    "compat": {
+      "sessionAffinityFormat": "openai-nosession"
+    }
+  },
   "qwen3.6-plus": {
     "api": "openai-completions",
     "baseUrl": "https://opencode.ai/zen/go/v1",
