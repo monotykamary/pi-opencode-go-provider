@@ -78,10 +78,9 @@ pi
 |-------|-----|------|---------|------------|------------|-------------|
 | Cat Jam Free | Completions | Text | 262K | 131K | — | — |
 | Claude Haiku 5.5 | Anthropic | Text + Image | 1.0M | 128K | $0.10 | $0.50 |
-| DeepSeek V4 Flash | Completions | Text | 1.0M | 384K | $0.15 | $0.60 |
-| DeepSeek V4 Flash Vision Exp | Completions | Text + Image | 1.0M | 384K | $0.15 | $0.60 |
 | DeepSeek V4 Pro (New) | Completions | Text | 1.0M | 384K | $0.66 | $1.98 |
 | DeepSeek V4.1 Flash | Completions | Text + Image | 1.0M | 384K | $0.15 | $0.60 |
+| Gemini 4 Argon Contributor | Completions | Text + Image | 1.0M | 66K | $4.00 | $20.00 |
 | GLM-5.2 | Completions | Text | 1.0M | 131K | $1.40 | $4.40 |
 | GLM-5.3 | Completions | Text | 1.0M | 131K | $1.40 | $4.40 |
 | GLM-5.3-Flash | Completions | Text + Image | 1.0M | 131K | $0.15 | $0.50 |
