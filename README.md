@@ -76,7 +76,7 @@ pi
 
 | Model | API | Type | Context | Max Tokens | Input Cost | Output Cost |
 |-------|-----|------|---------|------------|------------|-------------|
-| Cat Jam Free | Completions | Text | 262K | 131K | — | — |
+| Cat Jam Free | Completions | Text | 1.0M | 131K | — | — |
 | Claude Haiku 5.5 | Anthropic | Text + Image | 1.0M | 128K | $0.10 | $0.50 |
 | DeepSeek V4 Pro (New) | Completions | Text | 1.0M | 384K | $0.66 | $1.98 |
 | DeepSeek V4.1 Flash | Completions | Text + Image | 1.0M | 384K | $0.15 | $0.60 |
@@ -86,7 +86,6 @@ pi
 | GLM-5.3-Flash | Completions | Text + Image | 1.0M | 131K | $0.15 | $0.50 |
 | GPT-5.6 Luna | Responses | Text + Image | 1.1M | 128K | $0.20 | $1.20 |
 | GPT-6 Luna | Completions | Text + Image | 1.1M | 128K | $0.10 | $0.50 |
-| Grok 4.6 | Completions | Text + Image | 500K | 500K | $2.00 | $6.00 |
 | Grok 4.7 | Completions | Text + Image | 500K | 500K | $2.00 | $6.00 |
 | Hy3 | Completions | Text | 256K | 128K | $0.14 | $0.58 |
 | Hy4 preview | Completions | Text | 1.0M | 64K | $0.83 | $2.50 |
@@ -98,7 +97,6 @@ pi
 | MiMo V2.5 Pro | Completions | Text | 1.0M | 128K | $0.43 | $0.87 |
 | MiMo-V2.6-Flash | Completions | Text + Image | 1.0M | 131K | $0.14 | $0.28 |
 | MiMo-V2.6-Pro | Completions | Text + Image | 1.0M | 131K | $0.43 | $0.87 |
-| MiniMax-M2.7 | Completions | Text | 205K | 131K | $0.30 | $1.20 |
 | MiniMax-M3 | Anthropic | Text + Image | 1.0M | 131K | $0.30 | $1.20 |
 | Muse Spark 1.2 Contributor | Responses | Text + Image | 1.0M | 131K | $0.10 | $0.20 |
 | Muse Spark 1.3 Contributor | Responses | Text + Image | 1.0M | 131K | $0.10 | $0.20 |
@@ -106,7 +104,7 @@ pi
 | Qwen3.8 Flash | Anthropic | Text + Image | 1.0M | 131K | $0.15 | $0.47 |
 | Qwen3.8 Max | Anthropic | Text + Image | 1.0M | 131K | $2.00 | $6.00 |
 | Space Bunny | Completions | Text + Image | 1.0M | 524K | $0.15 | $0.60 |
-| Step 5 Preview Free | Completions | Text + Image | 1.0M | 66K | — | — |
+| Step 5 Preview | Completions | Text + Image | 1.0M | 66K | $1.00 | $2.70 |
 *Costs are per million tokens. Prices subject to change - check [opencode.ai](https://opencode.ai) for current pricing.*
 
 ## Usage
