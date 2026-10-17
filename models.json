@@ -271,33 +271,6 @@
     "maxTokens": 131072
   },
   {
-    "id": "cat-jam-free",
-    "name": "Cat Jam Free",
-    "api": "openai-completions",
-    "baseUrl": "https://opencode.ai/zen/go/v1",
-    "reasoning": true,
-    "thinkingLevelMap": {
-      "off": null,
-      "minimal": null,
-      "low": "low",
-      "medium": "medium",
-      "high": "high",
-      "xhigh": "xhigh",
-      "max": "max"
-    },
-    "input": [
-      "text"
-    ],
-    "cost": {
-      "input": 0,
-      "output": 0,
-      "cacheRead": 0,
-      "cacheWrite": 0
-    },
-    "contextWindow": 1048576,
-    "maxTokens": 131072
-  },
-  {
     "id": "space-bunny",
     "name": "Space Bunny",
     "api": "openai-completions",
@@ -514,6 +487,33 @@
       "input": 0.1,
       "output": 0.2,
       "cacheRead": 0.002,
+      "cacheWrite": 0
+    },
+    "contextWindow": 1048576,
+    "maxTokens": 131072
+  },
+  {
+    "id": "beam-free",
+    "name": "Beam Free",
+    "api": "openai-completions",
+    "baseUrl": "https://opencode.ai/zen/go/v1",
+    "reasoning": true,
+    "thinkingLevelMap": {
+      "off": null,
+      "minimal": null,
+      "low": "low",
+      "medium": "medium",
+      "high": "high",
+      "xhigh": "xhigh",
+      "max": "max"
+    },
+    "input": [
+      "text"
+    ],
+    "cost": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
       "cacheWrite": 0
     },
     "contextWindow": 1048576,

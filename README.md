@@ -76,7 +76,7 @@ pi
 
 | Model | API | Type | Context | Max Tokens | Input Cost | Output Cost |
 |-------|-----|------|---------|------------|------------|-------------|
-| Cat Jam Free | Completions | Text | 1.0M | 131K | — | — |
+| Beam Free | Completions | Text | 1.0M | 131K | — | — |
 | Claude Haiku 5.5 | Anthropic | Text + Image | 1.0M | 128K | $0.10 | $0.50 |
 | DeepSeek V4 Pro (New) | Completions | Text | 1.0M | 384K | $0.66 | $1.98 |
 | DeepSeek V4.1 Flash | Completions | Text + Image | 1.0M | 384K | $0.15 | $0.60 |
