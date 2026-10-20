@@ -189,5 +189,34 @@
     "contextWindow": 1048576,
     "maxTokens": 131072,
     "deprecatedAt": "2026-10-17T04:17:33.662Z"
+  },
+  "space-bunny": {
+    "id": "space-bunny",
+    "name": "Space Bunny",
+    "api": "openai-completions",
+    "baseUrl": "https://opencode.ai/zen/go/v1",
+    "reasoning": true,
+    "thinkingLevelMap": {
+      "off": null,
+      "minimal": null,
+      "low": "low",
+      "medium": "medium",
+      "high": "high",
+      "xhigh": "xhigh",
+      "max": "max"
+    },
+    "input": [
+      "text",
+      "image"
+    ],
+    "cost": {
+      "input": 0.15,
+      "output": 0.6,
+      "cacheRead": 0.03,
+      "cacheWrite": 0
+    },
+    "contextWindow": 1048576,
+    "maxTokens": 524288,
+    "deprecatedAt": "2026-10-20T04:41:48.512Z"
   }
 }

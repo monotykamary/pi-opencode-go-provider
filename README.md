@@ -97,13 +97,13 @@ pi
 | MiMo V2.5 Pro | Completions | Text | 1.0M | 128K | $0.43 | $0.87 |
 | MiMo-V2.6-Flash | Completions | Text + Image | 1.0M | 131K | $0.14 | $0.28 |
 | MiMo-V2.6-Pro | Completions | Text + Image | 1.0M | 131K | $0.43 | $0.87 |
+| MiniMax M3.1 Flash Free | Completions | Text + Image | 1.0M | 512K | — | — |
 | MiniMax-M3 | Anthropic | Text + Image | 1.0M | 131K | $0.30 | $1.20 |
 | Muse Spark 1.2 Contributor | Responses | Text + Image | 1.0M | 131K | $0.10 | $0.20 |
 | Muse Spark 1.3 Contributor | Responses | Text + Image | 1.0M | 131K | $0.10 | $0.20 |
 | Qwen3.7 Plus | Anthropic | Text + Image | 1.0M | 66K | $0.40 | $1.60 |
 | Qwen3.8 Flash | Anthropic | Text + Image | 1.0M | 131K | $0.15 | $0.47 |
 | Qwen3.8 Max | Anthropic | Text + Image | 1.0M | 131K | $2.00 | $6.00 |
-| Space Bunny | Completions | Text + Image | 1.0M | 524K | $0.15 | $0.60 |
 | Step 5 Preview | Completions | Text + Image | 1.0M | 66K | $1.00 | $2.70 |
 *Costs are per million tokens. Prices subject to change - check [opencode.ai](https://opencode.ai) for current pricing.*
 
