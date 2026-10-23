@@ -189,5 +189,54 @@
     "contextWindow": 1048576,
     "maxTokens": 524288,
     "deprecatedAt": "2026-10-20T04:41:48.512Z"
+  },
+  "minimax-m3.1-flash-free": {
+    "id": "minimax-m3.1-flash-free",
+    "name": "MiniMax M3.1 Flash Free",
+    "api": "openai-completions",
+    "baseUrl": "https://opencode.ai/zen/go/v1",
+    "reasoning": true,
+    "thinkingLevelMap": {
+      "off": null,
+      "minimal": null,
+      "low": "low",
+      "medium": "medium",
+      "high": "high",
+      "xhigh": "xhigh",
+      "max": "max"
+    },
+    "input": [
+      "text",
+      "image"
+    ],
+    "cost": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0
+    },
+    "contextWindow": 1000000,
+    "maxTokens": 512000,
+    "deprecatedAt": "2026-10-23T04:40:33.247Z"
+  },
+  "longcat-2.5-preview-free": {
+    "id": "longcat-2.5-preview-free",
+    "name": "LongCat 2.5 Preview Free",
+    "api": "openai-completions",
+    "baseUrl": "https://opencode.ai/zen/go/v1",
+    "reasoning": true,
+    "input": [
+      "text",
+      "image"
+    ],
+    "cost": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0
+    },
+    "contextWindow": 1000000,
+    "maxTokens": 131072,
+    "deprecatedAt": "2026-10-23T04:40:33.247Z"
   }
 }
