@@ -91,6 +91,7 @@ pi
 | Hy4 preview | Completions | Text | 1.0M | 64K | $0.83 | $2.50 |
 | Kimi K2.7 Code | Completions | Text + Image | 262K | 262K | $0.95 | $4.00 |
 | Kimi K3 (2x usage) | Completions | Text + Image | 1.0M | 131K | $3.00 | $15.00 |
+| Kimi K3.1 Pro | Completions | Text + Image | 1.0M | 131K | $2.00 | $10.00 |
 | LongCat-2.0 | Completions | Text | 1.0M | 131K | $0.30 | $1.20 |
 | MiMo V2.5 | Completions | Text + Image | 1.0M | 128K | $0.14 | $0.28 |
 | MiMo V2.5 Pro | Completions | Text | 1.0M | 128K | $0.43 | $0.87 |
