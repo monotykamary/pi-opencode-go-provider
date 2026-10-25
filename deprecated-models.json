@@ -238,5 +238,34 @@
     "contextWindow": 1000000,
     "maxTokens": 131072,
     "deprecatedAt": "2026-10-23T04:40:33.247Z"
+  },
+  "gemini-4-argon-contributor": {
+    "id": "gemini-4-argon-contributor",
+    "name": "Gemini 4 Argon Contributor",
+    "api": "openai-completions",
+    "baseUrl": "https://opencode.ai/zen/go/v1",
+    "reasoning": true,
+    "thinkingLevelMap": {
+      "off": null,
+      "minimal": null,
+      "low": "low",
+      "medium": "medium",
+      "high": "high",
+      "xhigh": null,
+      "max": null
+    },
+    "input": [
+      "text",
+      "image"
+    ],
+    "cost": {
+      "input": 4,
+      "output": 20,
+      "cacheRead": 0.2,
+      "cacheWrite": 0
+    },
+    "contextWindow": 1048576,
+    "maxTokens": 65536,
+    "deprecatedAt": "2026-10-25T04:33:11.672Z"
   }
 }

@@ -80,7 +80,7 @@ pi
 | Claude Haiku 5.5 | Anthropic | Text + Image | 1.0M | 128K | $0.10 | $0.50 |
 | DeepSeek V4 Pro (New) | Completions | Text | 1.0M | 384K | $0.66 | $1.98 |
 | DeepSeek V4.1 Flash | Completions | Text + Image | 1.0M | 384K | $0.15 | $0.60 |
-| Gemini 4 Argon Contributor | Completions | Text + Image | 1.0M | 66K | $4.00 | $20.00 |
+| Gemini 4 Argon | Completions | Text + Image | 1.0M | 66K | $2.00 | $10.00 |
 | GLM-5.2 | Completions | Text | 1.0M | 131K | $1.40 | $4.40 |
 | GLM-5.3 | Completions | Text | 1.0M | 131K | $1.40 | $4.40 |
 | GLM-5.3-Flash | Completions | Text + Image | 1.0M | 131K | $0.15 | $0.50 |
@@ -89,6 +89,7 @@ pi
 | Grok 4.7 | Completions | Text + Image | 500K | 500K | $2.00 | $6.00 |
 | Hy3 | Completions | Text | 256K | 128K | $0.14 | $0.58 |
 | Hy4 preview | Completions | Text | 1.0M | 64K | $0.83 | $2.50 |
+| Iceman Contributor Free | Completions | Text | 262K | 131K | — | — |
 | Kimi K2.7 Code | Completions | Text + Image | 262K | 262K | $0.95 | $4.00 |
 | Kimi K3 (2x usage) | Completions | Text + Image | 1.0M | 131K | $3.00 | $15.00 |
 | Kimi K3.1 Pro | Completions | Text + Image | 1.0M | 131K | $2.00 | $10.00 |
