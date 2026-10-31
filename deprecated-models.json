@@ -1,32 +1,4 @@
 {
-  "cat-jam-free": {
-    "id": "cat-jam-free",
-    "name": "Cat Jam Free",
-    "api": "openai-completions",
-    "baseUrl": "https://opencode.ai/zen/go/v1",
-    "reasoning": true,
-    "thinkingLevelMap": {
-      "off": null,
-      "minimal": null,
-      "low": "low",
-      "medium": "medium",
-      "high": "high",
-      "xhigh": "xhigh",
-      "max": "max"
-    },
-    "input": [
-      "text"
-    ],
-    "cost": {
-      "input": 0,
-      "output": 0,
-      "cacheRead": 0,
-      "cacheWrite": 0
-    },
-    "contextWindow": 1048576,
-    "maxTokens": 131072,
-    "deprecatedAt": "2026-10-17T04:17:33.662Z"
-  },
   "space-bunny": {
     "id": "space-bunny",
     "name": "Space Bunny",
