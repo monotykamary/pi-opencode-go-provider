@@ -79,7 +79,7 @@ pi
 | Beam Free | Completions | Text | 1.0M | 131K | — | — |
 | Claude Haiku 5.5 | Anthropic | Text + Image | 1.0M | 128K | $0.10 | $0.50 |
 | DeepSeek V4 Pro | Completions | Text | 1.0M | 384K | $0.66 | $1.98 |
-| DeepSeek V4.1 Flash | Completions | Text + Image | 1.0M | 384K | $0.15 | $0.60 |
+| DeepSeek V4.1 Flash 1017 | Completions | Text + Image | 1.0M | 384K | $0.15 | $0.60 |
 | Gemini 4 Argon | Completions | Text + Image | 1.0M | 66K | $2.00 | $10.00 |
 | GLM-5.2 | Completions | Text | 1.0M | 131K | $1.40 | $4.40 |
 | GLM-5.3 | Completions | Text | 1.0M | 131K | $1.40 | $4.40 |
