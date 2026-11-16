@@ -107,6 +107,7 @@ pi
 | Qwen3.7 Plus | Anthropic | Text + Image | 1.0M | 66K | $0.40 | $1.60 |
 | Qwen3.8 Flash | Anthropic | Text + Image | 1.0M | 131K | $0.15 | $0.47 |
 | Qwen3.8 Max | Anthropic | Text + Image | 1.0M | 131K | $2.00 | $6.00 |
+| Qwen4 Max | Anthropic | Text + Image | 1.0M | 262K | $1.50 | $4.50 |
 | Step 5 Preview | Completions | Text + Image | 1.0M | 66K | $1.00 | $2.70 |
 *Costs are per million tokens. Prices subject to change - check [opencode.ai](https://opencode.ai) for current pricing.*
 
