@@ -10,6 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { getAgentDir } from "@earendil-works/pi-coding-agent";
 import { GLYPH_MODES, type GlyphMode } from "./glyphs.ts";
+import { updateSettingsFile } from "./settings-file.ts";
 
 export const PROVIDER_ID = "opencode-go";
 export const CONFIG_BASENAME = "opencode-go-provider.json";
@@ -123,19 +124,13 @@ export function readUsageConfig(env: NodeJS.ProcessEnv = process.env): UsageConf
 /** Merge a patch into the config file, preserving unrelated keys. */
 export function writeUsageConfig(patch: Partial<UsageConfig>): boolean {
   try {
-    const file = configPath();
-    let document: Record<string, unknown> = {};
-    try {
-      const parsed: unknown = JSON.parse(fs.readFileSync(file, "utf8"));
-      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-        document = parsed as Record<string, unknown>;
+    updateSettingsFile(configPath(), (document) => {
+      const usage = document.usage;
+      if (usage !== undefined && (!usage || typeof usage !== "object" || Array.isArray(usage))) {
+        throw new Error("Expected a usage settings object");
       }
-    } catch {
-      document = {};
-    }
-    document.usage = { ...readFileUsage(), ...patch };
-    fs.mkdirSync(path.dirname(file), { recursive: true });
-    fs.writeFileSync(file, `${JSON.stringify(document, null, 2)}\n`);
+      return { ...document, usage: { ...usage, ...patch } };
+    });
     return true;
   } catch {
     return false;
