@@ -86,6 +86,7 @@ pi
 | GPT-5.6 Luna | Responses | Text + Image | 1.1M | 128K | $0.20 | $1.20 |
 | GPT-6 Luna | Completions | Text + Image | 1.1M | 128K | $0.10 | $0.50 |
 | Grok 4.7 | Completions | Text + Image | 500K | 500K | $2.00 | $6.00 |
+| HungerG Free | Completions | Text + Image | 1.0M | 66K | — | — |
 | Hy3 | Completions | Text | 256K | 128K | $0.14 | $0.58 |
 | Hy4 | Completions | Text + Image | 1.0M | 66K | $0.83 | $2.50 |
 | Hy4 flash Free | Completions | Text + Image | 1.0M | 66K | — | — |
