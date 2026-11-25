@@ -90,14 +90,12 @@ pi
 | Hy3 | Completions | Text | 256K | 128K | $0.14 | $0.58 |
 | Hy4 | Completions | Text + Image | 1.0M | 66K | $0.83 | $2.50 |
 | Hy4 flash Free | Completions | Text + Image | 1.0M | 66K | — | — |
-| Hy4 preview | Completions | Text | 1.0M | 64K | $0.83 | $2.50 |
+| Hy4 preview | Completions | Text | 1.0M | 66K | $0.83 | $2.50 |
 | Iceman Contributor Free | Completions | Text | 262K | 131K | — | — |
 | Kimi K2.7 Code | Completions | Text + Image | 262K | 262K | $0.95 | $4.00 |
 | Kimi K3 (2x usage) | Completions | Text + Image | 1.0M | 1.0M | $3.00 | $15.00 |
 | Kimi K3.1 Pro | Completions | Text + Image | 1.0M | 1.0M | $2.00 | $10.00 |
 | LongCat-2.5 | Completions | Text + Image | 1.0M | 262K | $0.30 | $1.20 |
-| MiMo V2.5 | Completions | Text + Image | 1.0M | 128K | $0.14 | $0.28 |
-| MiMo V2.5 Pro | Completions | Text | 1.0M | 128K | $0.43 | $0.87 |
 | MiMo-V2.6-Flash | Completions | Text + Image | 1.0M | 131K | $0.14 | $0.28 |
 | MiMo-V2.6-Pro | Completions | Text + Image | 1.0M | 131K | $0.43 | $0.87 |
 | MiniMax M3.1 Flash | Completions | Text + Image | 1.0M | 512K | $0.15 | $0.60 |
